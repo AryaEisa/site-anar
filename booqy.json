@@ -1,5 +1,22 @@
 {
-  "slug": "",
-  "name": "",
-  "environments": {}
+  "slug": "anar",
+  "name": "Anar",
+  "environments": {
+    "prod": {
+      "tenantId": "01m7mspqqwh62dx31ne4a3r8yy",
+      "apiBaseUrl": "https://9md43vqnp1.execute-api.eu-north-1.amazonaws.com",
+      "menuImageBaseUrl": "https://d3uasj29icofcs.cloudfront.net",
+      "stripePublishableKey": "",
+      "turnstileSiteKey": "",
+      "previewUrl": "https://anar.booqy.se"
+    },
+    "dev": {
+      "tenantId": "01m7msqmk0dhhh0tpfzvkm1cnk",
+      "apiBaseUrl": "https://dh2m5ildm7.execute-api.eu-north-1.amazonaws.com",
+      "menuImageBaseUrl": "https://d3kaislpxcbglq.cloudfront.net",
+      "stripePublishableKey": "pk_test_51U4OsHHhsMraauJUMyW7ID1lQq1jsS3Pdtzqu04WDgEnJW8VQIvGktIUNMPo8cZNgIRYPafALaLKQxLfckdiXOKX00LbiD1Obc",
+      "turnstileSiteKey": "1x00000000000000000000AA",
+      "previewUrl": "https://anar.dev.booqy.se"
+    }
+  }
 }
