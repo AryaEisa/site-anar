@@ -116,23 +116,144 @@ html[lang='fa'] {
   color: #e8d4b8;
 }
 
-/* Stegraden (Dag & sällskap ... Klart) i Anars smalare panel: raden får
-   bryta och centreras, så att sista steget aldrig hamnar mot kanten. */
+/* Flödets rubrik och stegrad i Anars panel (startsidan och flödessidorna).
+   Stegen är lika breda kolumner med en numrerad prick och namnet
+   under; linjen mellan prickarna är streckad framåt och hel bakåt. Smal
+   panel: bara det aktuella stegets namn (kitets regel), raden behåller höjden. */
+.kit-panel .page-head {
+  padding: clamp(0.25rem, 1vw, 0.75rem) 0 1.25rem;
+  scroll-margin-top: 1rem;
+}
+
+.kit-panel .page-head h1 {
+  margin: 0;
+  font: 600 clamp(2rem, 1.6rem + 1.4vw, 2.75rem) / 1.1 'Cormorant Garamond', Georgia, serif;
+  font-stretch: normal;
+  letter-spacing: 0.02em;
+  color: rgba(255, 248, 242, 0.98);
+}
+
+.kit-panel .page-lede {
+  margin: 0.4rem 0 0;
+  max-width: 40ch;
+  font: 400 0.98rem / 1.5 'Outfit', sans-serif;
+  color: rgba(255, 245, 238, 0.72);
+}
+
 .kit-panel .flow {
-  flex-wrap: wrap;
-  justify-content: center;
-  row-gap: 0.65rem;
-  padding-inline: 0.25rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+  margin: 1.25rem 0 0;
+  padding: 0;
 }
 
+.kit-panel .flow-step,
 .kit-panel .flow-step + .flow-step {
-  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: calc(28px + 0.5rem + 2.5em);
+  text-align: center;
+  font: 500 0.68rem / 1.25 'Outfit', sans-serif;
+  font-stretch: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 245, 238, 0.55);
 }
 
+/* Linjen från föregående prick till den här (mitt till mitt, med luft runt prickarna) */
 .kit-panel .flow-step + .flow-step::before {
-  flex: 0 0 1.1rem;
+  content: '';
+  position: absolute;
+  top: 13px;
+  inset-inline-start: calc(-50% + 20px);
+  inset-inline-end: calc(50% + 20px);
   min-width: 0;
-  margin: 0 0.55rem;
+  height: 0;
+  margin: 0;
+  border-top: 1.5px dashed rgba(201, 166, 107, 0.38);
+}
+
+.kit-panel .flow-step.is-done + .flow-step::before {
+  border-top-style: solid;
+  border-top-color: #c9a66b;
+}
+
+.kit-panel .flow-no {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(14, 9, 8, 0.92);
+  box-shadow: inset 0 0 0 1.5px rgba(201, 166, 107, 0.45);
+  font: 600 0.78rem / 1 'Outfit', sans-serif;
+  color: rgba(255, 245, 238, 0.75);
+  transform: none;
+}
+
+.kit-panel .flow-no svg {
+  width: 14px;
+  height: 14px;
+}
+
+.kit-panel .flow-step.is-done .flow-no {
+  background: #c9a66b;
+  color: #1a0a0a;
+  box-shadow: none;
+}
+
+.kit-panel .flow-step.is-current .flow-no {
+  background: linear-gradient(160deg, #e8d4b8 0%, #c9a66b 45%, #a67d33 100%);
+  color: #1a0a0a;
+  box-shadow: 0 0 0 4px rgba(201, 166, 107, 0.2);
+  transform: none;
+}
+
+.kit-panel .flow-label {
+  max-width: 100%;
+  padding-inline: 2px;
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.kit-panel .flow-step.is-current .flow-label {
+  color: rgba(255, 248, 242, 0.98);
+  font-weight: 600;
+}
+
+.kit-panel .flow-step.is-done .flow-label {
+  color: rgba(232, 212, 184, 0.85);
+}
+
+/* Panelen bred nog (en kolumn från 520 px, två kolumner från 960 px): alla
+   stegnamn syns. Smalare: bara det aktuella (kitets regel under 640 px). */
+@media (min-width: 520px) and (max-width: 800px), (min-width: 960px) {
+  .kit-panel .flow-step:not(.is-current) .flow-label {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    overflow: visible;
+  }
+}
+
+@media (min-width: 801px) and (max-width: 959px), (max-width: 519px) {
+  .kit-panel .flow-step:not(.is-current) .flow-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
 }
 
 /* Menysidornas laddning/fel/tom meny */

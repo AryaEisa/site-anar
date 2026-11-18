@@ -85,12 +85,14 @@ const DECK = [
   { x: -8, y: -39, s: 0.9, r: -5, o: 0.83 },
 ];
 const STEP_MS = 4800;
-const FLIP_MS = 950;
+/** Samma längd som guest-card-to-back i guest-reviews.css. */
+const FLIP_MS = 1150;
 
 function deckStyle(pos, count) {
   const d = DECK[Math.min(pos, DECK.length - 1)];
   return {
     '--deck-transform': `translate(${d.x}px, ${d.y}px) scale(${d.s}) rotate(${d.r}deg)`,
+    '--deck-delay': `${Math.min(pos, 4) * 40}ms`,
     '--deck-opacity': pos >= DECK.length ? 0 : d.o,
     zIndex: count - pos,
   };
@@ -100,9 +102,10 @@ const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * Gästomdömen som en kortlek: var femte sekund vänds det främre kortet bakåt
- * och de bakre glider fram ett steg, i en slinga. Stannar medan man håller
- * pekaren över leken; ett klick vänder direkt.
+ * Gästomdömen som en kortlek: var femte sekund lyfts det främre kortet, glider
+ * bakåt och läggs sist, medan de andra glider fram ett steg, i en slinga.
+ * Stannar medan pekaren är över leken eller fokus är i den; ett klick vänder
+ * direkt. Med reducerad rörelse står leken still tills man klickar.
  */
 export default function GuestReviewCards() {
   const { t } = useLanguage();
@@ -110,23 +113,29 @@ export default function GuestReviewCards() {
   const [front, setFront] = useState(0);
   const [leaving, setLeaving] = useState(null);
   const [paused, setPaused] = useState(false);
+  const frontRef = useRef(0);
+  const busy = useRef(false);
   const timer = useRef(null);
 
   const flip = useCallback(() => {
-    setFront((f) => {
-      if (!reducedMotion()) {
-        setLeaving(f);
-        clearTimeout(timer.current);
-        timer.current = setTimeout(() => setLeaving(null), FLIP_MS);
-      }
-      return (f + 1) % count;
-    });
+    // Ett kort i taget: en vändning som avbryts mitt i blir ett hopp.
+    if (busy.current || count < 2) return;
+    const was = frontRef.current;
+    frontRef.current = (was + 1) % count;
+    setFront(frontRef.current);
+    if (reducedMotion()) return;
+    busy.current = true;
+    setLeaving(was);
+    timer.current = setTimeout(() => {
+      busy.current = false;
+      setLeaving(null);
+    }, FLIP_MS);
   }, [count]);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
   useEffect(() => {
-    if (paused || count < 2) return undefined;
+    if (paused || count < 2 || reducedMotion()) return undefined;
     const id = setInterval(flip, STEP_MS);
     return () => clearInterval(id);
   }, [paused, flip, count]);
