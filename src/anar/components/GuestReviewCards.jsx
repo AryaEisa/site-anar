@@ -74,47 +74,52 @@ function StarRow({ count }) {
   );
 }
 
-/** Varje plats i leken: förskjutning, skala, lutning och opacitet (0 = främst). */
-const DECK = [
-  { x: 0, y: 0, s: 1, r: 0, o: 1 },
-  { x: 2, y: -9, s: 0.978, r: 1.2, o: 0.93 },
-  { x: -3, y: -15, s: 0.96, r: -2, o: 0.91 },
-  { x: 4, y: -21, s: 0.945, r: 2.6, o: 0.89 },
-  { x: -5, y: -27, s: 0.93, r: -3.2, o: 0.87 },
-  { x: 6, y: -33, s: 0.915, r: 4.2, o: 0.85 },
-  { x: -8, y: -39, s: 0.9, r: -5, o: 0.83 },
-];
-const STEP_MS = 4800;
-/** Samma längd som guest-card-to-back i guest-reviews.css. */
-const FLIP_MS = 1150;
-
-function deckStyle(pos, count) {
-  const d = DECK[Math.min(pos, DECK.length - 1)];
+/** Leken är lätt solfjäderformad: kortet på djup j (0 = främst). Högst fyra djup syns, resten ligger på djup 3. */
+const VISIBLE = 4;
+function slot(j) {
+  const d = Math.min(j, VISIBLE - 1);
   return {
-    '--deck-transform': `translate(${d.x}px, ${d.y}px) scale(${d.s}) rotate(${d.r}deg)`,
-    '--deck-delay': `${Math.min(pos, 4) * 40}ms`,
-    '--deck-opacity': pos >= DECK.length ? 0 : d.o,
-    zIndex: count - pos,
+    t: `translate3d(0, ${-d * 6}px, ${-d * 30}px) rotate(${d * 3}deg) scale(${+(1 - d * 0.03).toFixed(2)})`,
+    b: +(1 - d * 0.15).toFixed(2),
   };
+}
+const STEP_MS = 3600;
+const SWING_MS = 620;
+/** Långsam start, mycket snabb mitt, mjuk landning, som en hand. */
+const HAND = 'cubic-bezier(.8,0,.2,1)';
+
+/** Det främre kortets väg runt hörnet till lekens baksida. Ingen opacitet: kortet syns hela vägen. */
+function swingFrames(back) {
+  return [
+    { transform: slot(0).t, filter: 'brightness(1)' },
+    { transform: 'translate3d(42%, -58px, 20px) rotate(16deg)', filter: 'brightness(1)' },
+    { transform: 'translate3d(36%, -50px, -140px) rotate(12deg) scale(.92)', filter: `brightness(${(1 + back.b) / 2})` },
+    { transform: back.t, filter: `brightness(${back.b})` },
+  ];
 }
 
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 /**
- * Gästomdömen som en kortlek: var femte sekund lyfts det främre kortet, glider
- * bakåt och läggs sist, medan de andra glider fram ett steg, i en slinga.
+ * Gästomdömen som en lätt solfjäderformad kortlek: var 3,6 sekund svingar det
+ * främre kortet runt hörnet till baksidan medan de andra kliver fram ett steg.
+ * Kortet ligger över leken tills det har passerat den och går sedan bakom.
  * Stannar medan pekaren är över leken eller fokus är i den; ett klick vänder
- * direkt. Med reducerad rörelse står leken still tills man klickar.
+ * direkt. Med reducerad rörelse står leken still tills man klickar, och då
+ * byter korten plats utan rörelse.
  */
 export default function GuestReviewCards() {
   const { t } = useLanguage();
   const count = REVIEWS.length;
   const [front, setFront] = useState(0);
-  const [leaving, setLeaving] = useState(null);
+  /** Kortet som svingar just nu, och om det fortfarande ligger över leken. */
+  const [swing, setSwing] = useState(null);
   const [paused, setPaused] = useState(false);
   const frontRef = useRef(0);
   const busy = useRef(false);
+  const cards = useRef([]);
+  const anim = useRef(null);
   const timer = useRef(null);
 
   const flip = useCallback(() => {
@@ -123,16 +128,29 @@ export default function GuestReviewCards() {
     const was = frontRef.current;
     frontRef.current = (was + 1) % count;
     setFront(frontRef.current);
-    if (reducedMotion()) return;
+    const el = cards.current[was];
+    if (reducedMotion() || typeof el?.animate !== 'function') return;
     busy.current = true;
-    setLeaving(was);
-    timer.current = setTimeout(() => {
+    setSwing({ index: was, over: true });
+    const a = el.animate(swingFrames(slot(count - 1)), { duration: SWING_MS, easing: HAND, fill: 'forwards' });
+    anim.current = a;
+    // Halvvägs har kortet passerat leken och läggs bakom den.
+    timer.current = setTimeout(() => setSwing({ index: was, over: false }), SWING_MS / 2);
+    a.onfinish = () => {
       busy.current = false;
-      setLeaving(null);
-    }, FLIP_MS);
+      anim.current = null;
+      setSwing(null);
+      a.cancel();
+    };
   }, [count]);
 
-  useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(
+    () => () => {
+      clearTimeout(timer.current);
+      anim.current?.cancel();
+    },
+    [],
+  );
 
   useEffect(() => {
     if (paused || count < 2 || reducedMotion()) return undefined;
@@ -153,13 +171,22 @@ export default function GuestReviewCards() {
         {REVIEWS.map((review, index) => {
           const pos = (index - front + count) % count;
           const isFront = pos === 0;
+          const swinging = swing?.index === index;
+          const s = slot(pos);
           return (
             <blockquote
               key={review.id}
-              className={`guest-reviews-card${isFront ? ' guest-reviews-card--featured' : ''}${
-                leaving === index ? ' guest-reviews-card--leaving' : ''
+              ref={(el) => {
+                cards.current[index] = el;
+              }}
+              className={`guest-reviews-card${isFront || swinging ? ' guest-reviews-card--featured' : ''}${
+                swinging ? ' guest-reviews-card--leaving' : ''
               }`}
-              style={deckStyle(pos, count)}
+              style={{
+                '--deck-transform': s.t,
+                '--deck-filter': `brightness(${s.b})`,
+                zIndex: swinging ? (swing.over ? 100 : 1) : 100 - pos,
+              }}
               aria-hidden={!isFront}
             >
               <div className="guest-reviews-head">

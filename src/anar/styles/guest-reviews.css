@@ -29,9 +29,16 @@
   }
 }
 
+/* Kortleken (GuestReviewCards.jsx) är smalare än kolumnen: det främre kortet
+   svingar runt högra hörnet (42 % av sin bredd åt höger, 58 px upp, 16 grader)
+   och ska synas hela vägen. Bredden lämnar plats för svingen, och kort plus
+   sving står centrerade i kolumnen. Alltid vänster till höger, även på farsi. */
 .guest-reviews {
+  --deck-swing-room: 2.25rem;
+  --deck-w: min(25rem, calc((100% - var(--deck-swing-room)) / 1.45));
   width: 100%;
   box-sizing: border-box;
+  direction: ltr;
 }
 
 .reviews-column .guest-reviews {
@@ -39,19 +46,62 @@
   margin: 0;
 }
 
-/* Kortlek (GuestReviewCards.jsx): alla kort i samma rutnätscell, så att leken
-   blir lika hög som det högsta kortet. Platsen i leken (--deck-transform,
-   --deck-opacity, z-index) sätts per kort; när det främre vänds bakåt glider
-   de andra fram ett steg med en övergång. */
+/* Alla kort i samma rutnätscell, så att leken blir lika hög som det högsta
+   kortet. Platsen i leken (--deck-transform, --deck-filter, z-index) sätts
+   per kort; de bakre kliver fram ett steg med en övergång. Svingen spelas med
+   Web Animations i komponenten. Övre luften rymmer solfjäderns lutning; på
+   toppen av svingen går kortet en bit upp över betygspanelen. */
 .guest-reviews-stack {
   position: relative;
   display: grid;
+  width: var(--deck-w);
+  margin-inline-start: max(0px, calc((100% - var(--deck-w) * 1.45 - var(--deck-swing-room)) / 2));
   padding-top: 2.6rem;
   padding-bottom: 0.35rem;
   overflow: visible;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  cursor: pointer;
 }
 
 .guest-reviews-stack > .guest-reviews-card {
+  grid-area: 1 / 1;
+  position: relative;
+  align-self: start;
+  transform-origin: 50% 50%;
+  transform: var(--deck-transform);
+  filter: var(--deck-filter);
+  transition:
+    transform 420ms cubic-bezier(0.6, 0, 0.2, 1),
+    filter 420ms ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+/* Kortet som svingar styrs helt av animationen */
+.guest-reviews-stack > .guest-reviews-card--leaving {
+  transition: none;
+}
+
+/* Hover-effekten sitter på kortet, inte på pekaren */
+.guest-reviews-stack:hover > .guest-reviews-card--featured:not(.guest-reviews-card--leaving) {
+  transform: translate3d(0, -3px, 0) scale(1.01);
+  border-color: rgba(232, 212, 184, 0.75);
+  box-shadow:
+    0 0 0 1px rgba(201, 166, 107, 0.25),
+    0 26px 56px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+/* Reducerad rörelse: leken står still, ett klick byter kort utan rörelse */
+@media (prefers-reduced-motion: reduce) {
+  .guest-reviews-stack > .guest-reviews-card {
+    transition: none;
+  }
+}
+
+.guest-reviews-card {
   grid-area: 1 / 1;
   position: relative;
   align-self: start;
@@ -234,11 +284,4 @@
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-/* Smal skärm: de snedställda bakre korten får luft i sidled, aldrig utanför kanten */
-@media (max-width: 800px) {
-  .guest-reviews-stack {
-    padding-inline: 10px;
-  }
 }
