@@ -25,6 +25,11 @@ export const site = {
   } as { trigger: string; option: string; expectText: RegExp; expectLang: string } | null,
   /** Parts of pages that change from run to run (masked in screenshots). */
   visualMasks: ['.guest-reviews'],
+  /**
+   * Decorative layers hidden in screenshots: full-page photos make every
+   * baseline megabytes big and say nothing about the layout.
+   */
+  visualHide: ['.landing-bg', '.landing-bg-cycle'],
   /** Budgets on the dev site (Core Web Vitals "good" thresholds). */
   budgets: { lcpMs: 2500, cls: 0.1 },
 }

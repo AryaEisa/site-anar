@@ -17,7 +17,7 @@ const CI = Boolean(process.env.CI)
 
 const width = (w: number, h: number, touch = false) => ({
   viewport: { width: w, height: h },
-  ...(touch ? { isMobile: true, hasTouch: true, deviceScaleFactor: 2 } : {}),
+  ...(touch ? { isMobile: true, hasTouch: true, deviceScaleFactor: 1 } : {}),
 })
 
 export default defineConfig({

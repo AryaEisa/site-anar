@@ -40,7 +40,8 @@
   /* Språkväljaren och kitets knappar och kategorichips. */
   .language-switcher .language-switcher-select,
   .chip-rail .chip,
-  .bq-btn--sm {
+  .bq-btn--sm,
+  .btn-small {
     min-height: 44px;
   }
 }

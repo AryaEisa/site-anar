@@ -48,12 +48,14 @@ test('header navigation reaches every page', async ({ page }) => {
   await open(page, '/')
   const header = page.locator('header').first()
   const menuButton = header.getByRole('button', { name: /meny|menu/i }).first()
-  // The header's links, and on a phone the menu the burger opens (aria-controls).
+  // On a phone with a burger: the menu it opens (aria-controls); otherwise the header's links.
   const links = async () => {
     if (isPhone(page) && (await menuButton.isVisible())) {
-      if ((await menuButton.getAttribute('aria-expanded')) !== 'true') await menuButton.click()
       const drawer = await menuButton.getAttribute('aria-controls')
-      if (drawer) return page.locator(`#${drawer} a[href^="/"]:visible, header a[href^="/"]:visible`)
+      if (drawer) {
+        if ((await menuButton.getAttribute('aria-expanded')) !== 'true') await menuButton.click()
+        return page.locator(`#${drawer} a[href^="/"]:visible`)
+      }
     }
     return page.locator('header a[href^="/"]:visible')
   }

@@ -18,6 +18,20 @@ test.skip(!CONFIGURED, NOT_CONFIGURED)
 const paths = CONFIGURED ? await sitePaths() : []
 const themes: ('light' | 'dark' | null)[] = site.themes.length ? site.themes : [null]
 
+/**
+ * 09:00 today in Stockholm: the booking widget then shows the whole day's
+ * times on every run, so its height (and the page's) does not depend on
+ * when the suite runs. Only the page's clock; the API keeps real time.
+ */
+function stockholmMorning(): Date {
+  const day = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Stockholm' })
+  const offset = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Stockholm', timeZoneName: 'longOffset' })
+    .formatToParts(new Date())
+    .find((p) => p.type === 'timeZoneName')!
+    .value.replace('GMT', '') || '+00:00'
+  return new Date(`${day}T09:00:00${offset}`)
+}
+
 /** Things that move or come from outside: masked in the baselines. */
 function masks(page: Page) {
   return [
@@ -46,6 +60,7 @@ for (const theme of themes) {
         }, theme)
       }
       await page.emulateMedia({ reducedMotion: 'reduce' })
+      await page.clock.setFixedTime(stockholmMorning())
       await open(page, path)
       if (theme) await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
 
@@ -80,6 +95,7 @@ for (const theme of themes) {
           return
         }
         await page.evaluate(() => window.scrollTo(0, 0))
+        if (site.visualHide.length) await page.addStyleTag({ content: `${site.visualHide.join(', ')} { visibility: hidden !important; }` })
         await expect.soft(page).toHaveScreenshot(name, {
           fullPage: true,
           mask: masks(page),

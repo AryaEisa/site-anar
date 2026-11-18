@@ -68,6 +68,10 @@ site's).
 | `SITE_TEST_LOCATION_ID` | the site's first location |
 | `SITE_VISUAL=0` | skip the visual baselines |
 
-Baselines are per platform in `specs/__screenshots__/<platform>/`; CI uses
-Linux. A page without a baseline is reported, not failed, until the
-"Visual baselines" workflow (or `npm run baselines`) writes it.
+Baselines are per platform in `specs/__screenshots__/<platform>/`. CI
+compares against `linux/`, which the "Visual baselines" workflow writes from
+the dev site and commits. A Mac's (`darwin/`) stay local and out of git:
+`npm run baselines` writes them once. A page without a baseline is reported
+("no visual baseline"), not failed. Screenshots run with the page clock at
+09:00 Stockholm, hide decorative backgrounds (`site.config.ts` visualHide)
+and mask what changes by itself (dates, times, reviews, maps).

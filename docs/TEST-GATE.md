@@ -39,7 +39,6 @@ on:
 
 permissions:
   contents: read
-  packages: read
 
 concurrency:
   group: site-tests-${{ github.event.pull_request.number || github.ref_name }}
@@ -59,38 +58,28 @@ jobs:
         with:
           node-version: "24"
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            e2e/package-lock.json
-          registry-url: https://npm.pkg.github.com
-          scope: "@bookingsystemadvancedorg"
+          cache-dependency-path: e2e/package-lock.json
 
       - name: Install
-        run: |
-          npm ci
-          npm --prefix e2e ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm --prefix e2e ci
 
-      # A pull request may be opened before Deploy has put its commit on dev:
-      # the dev build is deterministic, so wait until the site loads the same
-      # bundle as this commit's dev build (at most 15 minutes).
+      # A pull request may be opened before Deploy has put its commit on dev.
+      # Every build stamps its commit into index.html (<meta name="booqy-build">,
+      # vite.config.ts): wait until dev serves this one (at most 15 minutes).
       - name: Dev serves this commit
         if: github.event_name == 'pull_request'
         env:
-          BOOQY_ENV: dev
+          SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           url=$(jq -r '.environments.dev.previewUrl // empty' booqy.json)
           [ -n "$url" ] || { echo "No dev site in booqy.json: nothing to wait for."; exit 0; }
-          npm run build > /dev/null
-          want=$(grep -o 'assets/index-[^"]*\.js' dist/index.html | head -1)
           for i in $(seq 1 60); do
-            got=$(curl -fsS "$url/" | grep -o 'assets/index-[^"]*\.js' | head -1 || true)
-            if [ "$got" = "$want" ]; then echo "dev serves this commit ($want)"; exit 0; fi
+            got=$(curl -fsS "$url/" | grep -o 'name="booqy-build" content="[0-9a-f]*"' | grep -o '[0-9a-f]\{40\}' || true)
+            if [ "$got" = "$SHA" ]; then echo "dev serves $SHA"; exit 0; fi
             sleep 15
           done
-          echo "::error::$url does not serve this commit's build after 15 minutes. Check that Deploy on dev went through, then re-run this check."
+          echo "::error::$url serves ${got:-an older build}, not $SHA, after 15 minutes. Check that Deploy on dev went through, then re-run this check."
           exit 1
 
       - name: Browser
