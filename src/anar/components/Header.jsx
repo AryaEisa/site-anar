@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSite } from '@bookingsystemadvancedorg/site-kit';
 import logoImg from '../images/logo.png';
 import OpeningHoursDropdown from './OpeningHoursDropdown';
 import OpeningHoursModal from './OpeningHoursModal';
 import { useLanguage } from '../i18n/LanguageContext';
 
-const LEFT_NAV = [
+const BASE_LEFT_NAV = [
   { key: 'nav.meny', to: '/meny' },
   { key: 'nav.kolgrill', to: '/kolgrill' },
   { key: 'nav.drinkmeny', to: '/drinkmeny' },
@@ -20,6 +21,15 @@ const RIGHT_NAV = [
 
 export default function Header() {
   const { t } = useLanguage();
+  const { config, location } = useSite();
+  const { features } = config.tenant;
+  // Funktioner från planen: visas bara när restaurangen har dem.
+  const LEFT_NAV = [
+    ...BASE_LEFT_NAV,
+    ...(features.giftCards ? [{ key: 'nav.presentkort', to: '/presentkort' }] : []),
+    ...(features.events ? [{ key: 'nav.evenemang', to: '/evenemang' }] : []),
+    ...(features.waitlist && location.waitlist?.publicJoin ? [{ key: 'nav.ko', to: '/ko' }] : []),
+  ];
   const [menuOpen, setMenuOpen] = useState(false);
   const [hoursModalOpen, setHoursModalOpen] = useState(false);
   const menuBtnRef = useRef(null);

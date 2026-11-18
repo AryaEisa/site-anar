@@ -1,7 +1,10 @@
-import { BookingFlow, useSite } from '@bookingsystemadvancedorg/site-kit';
+import { lazy, Suspense } from 'react';
+import { SkelCard, sitePages, useSite } from '@bookingsystemadvancedorg/site-kit';
 import GuestReviewCards from '../components/GuestReviewCards';
 import RestaurantMapSection from '../components/RestaurantMapSection';
 import ReviewsPanel from '../components/ReviewsPanel';
+
+const BookingFlow = lazy(sitePages.booking);
 
 /** Startsidan: bokning (kitets flöde) bredvid betyg och omdömen, sedan kartan. */
 export default function HomePage() {
@@ -14,7 +17,9 @@ export default function HomePage() {
         <div className="desk-split-col desk-split-col--form">
           {canBook && (
             <div className="kit-panel">
-              <BookingFlow />
+              <Suspense fallback={<SkelCard label="Hämtar bokningen" />}>
+                <BookingFlow />
+              </Suspense>
             </div>
           )}
         </div>

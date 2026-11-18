@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { OfferCard, trackPage, useSite } from '@bookingsystemadvancedorg/site-kit';
+import { OfferCard, SkelCard, trackPage, useSite } from '@bookingsystemadvancedorg/site-kit';
 import bgKebab from '../images/kebab.gif';
 import bgMeny from '../images/granatapple.webp';
 import bgKolgrill from '../images/kollgrill.webp';
@@ -85,7 +85,9 @@ export default function SiteLayout() {
         <Header />
         <LanguageSwitcher />
         <OrderBar />
-        <Outlet />
+        <Suspense fallback={<SkelCard label="Hämtar sidan" />}>
+          <Outlet />
+        </Suspense>
         <MobilePreFooterNav />
         {marketing && <OfferCard key={location.locationId} />}
         <Footer />

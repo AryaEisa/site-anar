@@ -38,6 +38,9 @@ export const STRINGS = {
     'nav.historia': 'Vår historia',
     'nav.parkering': 'Parkering',
     'nav.kontakt': 'Kontakt',
+    'nav.presentkort': 'Presentkort',
+    'nav.evenemang': 'Evenemang',
+    'nav.ko': 'Kö',
 
     'a11y.navLeft': 'Huvudmeny vänster',
     'a11y.navRight': 'Huvudmeny höger',
@@ -295,6 +298,9 @@ export const STRINGS = {
     'nav.historia': 'Our story',
     'nav.parkering': 'Parking',
     'nav.kontakt': 'Contact',
+    'nav.presentkort': 'Gift cards',
+    'nav.evenemang': 'Events',
+    'nav.ko': 'Queue',
 
     'a11y.navLeft': 'Main navigation left',
     'a11y.navRight': 'Main navigation right',
@@ -548,6 +554,9 @@ export const STRINGS = {
     'nav.historia': 'داستان ما',
     'nav.parkering': 'پارکینگ',
     'nav.kontakt': 'تماس',
+    'nav.presentkort': 'کارت هدیه',
+    'nav.evenemang': 'رویدادها',
+    'nav.ko': 'صف',
 
     'a11y.navLeft': 'فهرست اصلی چپ',
     'a11y.navRight': 'فهرست اصلی راست',
