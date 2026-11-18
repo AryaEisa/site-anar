@@ -60,7 +60,7 @@ export default defineConfig({
       [1440, 900, false],
     ].map(([w, h, touch]) => ({
       name: `ui-${w}`,
-      testMatch: /(ui|ux)\.spec\.ts/,
+      testMatch: /(ui|ux|deck)\.spec\.ts/,
       use: { ...devices['Desktop Chrome'], ...width(w as number, h as number, touch as boolean) },
     })),
   ],
