@@ -1,33 +1,6 @@
-.booking-reviews-stack {
-  width: 100%;
-  /* Header + beställ-rad (gästexempel ligger i omdömeskolumnen) */
-  --br-reserved: clamp(8.75rem, 22svh, 12.25rem);
-}
-
-@media (min-width: 801px) {
-  .booking-reviews-stack {
-    --br-reserved: clamp(9.5rem, 21svh, 12rem);
-  }
-}
-
-.booking-reviews-stack .booking,
-.booking-reviews-stack .reviews-panel-card {
-  max-height: calc(100svh - var(--br-reserved));
-}
-
-@media (max-width: 800px) {
-  .booking-reviews-stack .booking,
-  .booking-reviews-stack .reviews-panel-card {
-    max-height: none;
-  }
-
-  .booking-reviews-stack .booking-card {
-    max-height: none;
-    overflow-y: visible;
-    overscroll-behavior: auto;
-    scrollbar-gutter: auto;
-  }
-}
+/* Startsidans bokning har ingen höjdgräns: bokningskortet växer med stegen
+   (bordskartan, Uppgifter, Klart) och trycker ned sidan, så att "Hitta hit"
+   alltid börjar under det. */
 
 /* Kortleken (GuestReviewCards.jsx) är smalare än kolumnen: det främre kortet
    svingar runt högra hörnet (42 % av sin bredd åt höger, 58 px upp, 16 grader)
