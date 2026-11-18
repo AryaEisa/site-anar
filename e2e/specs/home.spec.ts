@@ -6,7 +6,8 @@ import { CONFIGURED, NOT_CONFIGURED } from '../lib/site'
  * its steps and pushes the page down. At step 3 the table picker is fully
  * visible, nothing lies on top of it (elementFromPoint at its centre and near
  * its corners), "Hitta hit" starts below the booking, and a table can be
- * picked. Nothing is held or booked.
+ * picked: bookable tables breathe, and after a pick focus moves on to
+ * Bekräfta bord. Nothing is held or booked.
  */
 
 test.skip(!CONFIGURED, NOT_CONFIGURED)
@@ -60,6 +61,13 @@ test('booking step 3: the table picker is visible, not covered and clickable @ux
   expect(result.formOverflow, 'booking content cut off by its own box').toBeLessThanOrEqual(2)
   expect(result.formBottom, 'the next section starts below the booking').toBeLessThanOrEqual(result.nextTop + 1)
 
+  // Bookable tables breathe (a slow glow), all in step.
+  const breathing = await page.evaluate(() =>
+    document.getAnimations().filter((a) => (a as CSSAnimation).animationName?.startsWith('plan-breathe')).length,
+  )
+  expect(breathing, 'bookable tables that breathe').toBeGreaterThan(0)
+
   await free.first().click()
-  await expect(main.getByRole('button', { name: 'Bekräfta bord' })).toBeVisible()
+  // After the half-second pick effect the page glides on and focus lands on the next step.
+  await expect(main.getByRole('button', { name: 'Bekräfta bord' })).toBeFocused({ timeout: 4000 })
 })

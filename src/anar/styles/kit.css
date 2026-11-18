@@ -30,6 +30,25 @@
   --r-md: 2px;
   --r-lg: 2px;
   --r-pill: 2px;
+  /* Bordsvalet i Anars färger: varmt grädde som andas = går att boka, fylld
+     guld = ditt val, dämpat glödrött = bokat, nästan bortsuddat = fel storlek. */
+  --seat-free: #e6d1a6;
+  --seat-free-hi: #fbefd5;
+  --seat-free-hover: #f1e0bd;
+  --seat-free-line: #c9a66b;
+  --seat-free-side: #9a7d4c;
+  --seat-glow: rgba(232, 190, 110, 0.6);
+  --seat-ring: #e8c98a;
+  --seat-pick: #c9a66b;
+  --seat-pick-line: #f0d9a8;
+  --seat-pick-side: #8a6834;
+  --seat-pick-ink: #1a0a0a;
+  --seat-taken: #6b2925;
+  --seat-taken-line: #b0574d;
+  --seat-taken-side: #4a1c19;
+  --seat-blocked: #46221f;
+  --seat-unfit: #2b221e;
+  --seat-unfit-line: #6b5c50;
   color-scheme: dark;
 }
 

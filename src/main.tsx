@@ -7,6 +7,7 @@ import martianUrl from './assets/fonts/martian-mono.woff2?url'
 import App from './App'
 import { LanguageProvider } from './anar/i18n/LanguageContext'
 import { Canonical } from './shared/Canonical'
+import { installTablePickerBridge } from './anar/kitBridge/tablePicker'
 import '@fontsource/outfit/300.css'
 import '@fontsource/outfit/400.css'
 import '@fontsource/outfit/500.css'
@@ -22,6 +23,9 @@ import '@bookingsystemadvancedorg/site-kit/styles.css'
 import './anar/styles/index.css'
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined
+
+// Bordsvalets klickeffekt och mjuka rullning tills site-kit har dem (src/anar/kitBridge/README.md).
+installTablePickerBridge()
 
 configureSiteKit({
   apiBaseUrl,
