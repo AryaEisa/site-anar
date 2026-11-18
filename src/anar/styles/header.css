@@ -1,14 +1,15 @@
 .site-header {
   position: relative;
   z-index: 30;
-  /* LTR-layout även när sidan är fa (html dir=rtl) — hamburger ska ligga fysiskt till höger. */
+  /* LTR-layout även när sidan är fa (html dir=rtl): hamburger ska ligga fysiskt till höger. */
   direction: ltr;
   unicode-bidi: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: clamp(0.75rem, 2vw, 2rem);
-  padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 4vw, 3rem);
+  /* Figma 1440: gap 29, padding 28 48 */
+  gap: clamp(0.75rem, 2vw, 1.8125rem);
+  padding: clamp(1rem, 1.95vw, 1.75rem) clamp(1rem, 3.34vw, 3rem);
   border-bottom: 1px solid rgba(255, 245, 238, 0.12);
   backdrop-filter: blur(10px);
   background: rgba(6, 3, 3, 0.35);
@@ -171,7 +172,14 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(0.35rem, 1.2vw, 1.1rem);
+  /* Alla länkar (och Öppettider-knappen) på samma linje på båda sidor om loggan */
+  align-items: center;
+  gap: clamp(0.35rem, 1.18vw, 1.0625rem);
+}
+
+.site-header-nav li {
+  display: flex;
+  align-items: center;
 }
 
 .site-header-nav--left ul {
@@ -183,8 +191,10 @@
 }
 
 .site-header-nav a {
+  display: block;
+  line-height: 1.26;
   font-family: 'Outfit', system-ui, sans-serif;
-  font-size: clamp(0.78rem, 1.05vw, 0.95rem);
+  font-size: clamp(0.78rem, 1.05vw, 0.94375rem);
   font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -215,7 +225,7 @@
 }
 
 .site-header-brand img {
-  width: clamp(64px, 8vw, 92px);
+  width: clamp(64px, 6.12vw, 88px);
   height: auto;
   display: block;
 }

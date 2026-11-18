@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { formatPhoneNational, phoneHref, useLocationInfo, useSite } from '@bookingsystemadvancedorg/site-kit';
 import uberEatsImg from '../images/delivery/ubereats.png';
 import foodoraImg from '../images/Foodora.png';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -10,11 +11,13 @@ const UBER_EATS_URL =
 const FOODORA_WEB = 'https://www.foodora.se/restaurant/t5ix/anar-restaurang-and-bar';
 const FOODORA_APP = 'https://foodorase.page.link/3enPXQfwXKuMinZS6';
 
-const PHONE_TEL = '+46760056857';
-const PHONE_DISPLAY = '076-0056 857';
-
 export default function BestallHemPage() {
   const { t } = useLanguage();
+  const { config, location } = useSite();
+  const { phone } = useLocationInfo();
+  // Avhämtning och catering länkar till Booqys flöden när restaurangen har dem.
+  const pickup = Boolean(config.tenant.features.ordering && location.ordering?.pickup);
+  const catering = Boolean(config.tenant.features.catering);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -73,14 +76,16 @@ export default function BestallHemPage() {
             {t('bestall.phoneH2')}
           </h2>
           <ul className="bestall-hem-phone-list">
-            <li>{t('bestall.phoneLi1')}</li>
-            <li>{t('bestall.phoneLi2')}</li>
+            <li>{pickup ? <Link to="/bestall">{t('bestall.phoneLi1')}</Link> : t('bestall.phoneLi1')}</li>
+            <li>{catering ? <Link to="/catering">{t('bestall.phoneLi2')}</Link> : t('bestall.phoneLi2')}</li>
           </ul>
           <div className="bestall-hem-phone-actions">
-            <a className="bestall-hem-phone-cta" href={`tel:${PHONE_TEL}`}>
-              <span className="bestall-hem-phone-cta-label">{t('bestall.ring')}</span>
-              <span className="bestall-hem-phone-cta-number">{PHONE_DISPLAY}</span>
-            </a>
+            {phone && (
+              <a className="bestall-hem-phone-cta" href={phoneHref(phone)}>
+                <span className="bestall-hem-phone-cta-label">{t('bestall.ring')}</span>
+                <span className="bestall-hem-phone-cta-number">{formatPhoneNational(phone)}</span>
+              </a>
+            )}
             <Link className="bestall-hem-phone-cta bestall-hem-phone-cta--contact" to="/kontakt">
               <span className="bestall-hem-phone-cta-label bestall-hem-phone-cta-label--on-dark">
                 {t('bestall.contact')}

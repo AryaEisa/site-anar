@@ -1,19 +1,16 @@
+import { useLocationInfo } from '@bookingsystemadvancedorg/site-kit';
 import { useLanguage } from '../i18n/LanguageContext';
 
-const LINE1 = 'Djurgårdsgatan 33A';
-const LINE2 = '582 29 Linköping';
-
-const MAPS_EMBED = `https://maps.google.com/maps?q=${encodeURIComponent(
-  `ANAR Restaurang & Bar, ${LINE1}, ${LINE2}`
-)}&z=16&output=embed&iwloc=near`;
-
-const MAPS_NAV = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-  `ANAR Restaurang & Bar, ${LINE1}, ${LINE2}`
-)}`;
-
+/** Hitta hit: adressen kommer från platsen i Booqy (gata, sedan postnummer och ort). */
 export default function RestaurantMapSection() {
   const { t } = useLanguage();
+  const { address } = useLocationInfo();
   const name = t('map.name');
+  const [LINE1, ...rest] = address.split(',').map((p) => p.trim());
+  const LINE2 = rest.join(', ');
+  const query = encodeURIComponent([name, address].filter(Boolean).join(', '));
+  const MAPS_EMBED = `https://maps.google.com/maps?q=${query}&z=16&output=embed&iwloc=near`;
+  const MAPS_NAV = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 
   return (
     <section className="home-map" aria-labelledby="home-map-heading">

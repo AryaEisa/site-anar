@@ -1,24 +1,12 @@
-/** Veckoschema per avdelning (visas under Öppettider). dayKey översätts i UI. */
+/**
+ * Lunch- och middagstiderna (fast text från Anar; Booqy har bara platsens
+ * öppettider). Restaurangens och avhämtningens tider kommer från Booqy, se
+ * OpeningHoursContent.jsx. dayKey översätts i UI.
+ */
 
-const RESTAURANT_AND_TAKEAWAY_ROWS = [
-  { dayKey: 'saturday', hours: '12-22' },
-  { dayKey: 'sunday', closed: true },
-  { dayKey: 'monday', closed: true },
-  { dayKey: 'tuesday', hours: '11-21' },
-  { dayKey: 'wednesday', hours: '11-21' },
-  { dayKey: 'thursday', hours: '11-21' },
-  { dayKey: 'friday', hours: '11-22' },
-];
+export const DAY_ORDER = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
-export const OPENING_HOURS_SECTIONS = [
-  {
-    id: 'restaurant',
-    rows: RESTAURANT_AND_TAKEAWAY_ROWS,
-  },
-  {
-    id: 'avhamtning',
-    rows: RESTAURANT_AND_TAKEAWAY_ROWS,
-  },
+export const MEAL_SECTIONS = [
   {
     id: 'lunch',
     rows: [

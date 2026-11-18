@@ -1,47 +1,65 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { SkelCard } from '@bookingsystemadvancedorg/site-kit';
 import { useLanguage } from '../i18n/LanguageContext';
-import { pickLocale } from '../i18n/localeText';
+import { categoryIntro, descriptionParts, priceText, useBooqyMenu, varietyList } from '../data/booqyMenu';
 
-function MenySectionBody({ sec, locale }) {
+function MenyDish({ item }) {
+  const price = priceText(item);
+  const { text, note } = descriptionParts(item);
+  const varieties = varietyList(item);
+  if (varieties.length) {
+    return (
+      <div className="meny-sublist">
+        <h3 className="meny-sublist-title">
+          {item.name}
+          {price && ` ${price}`}
+        </h3>
+        <ul className="meny-bullets">
+          {varieties.map((v) => (
+            <li key={v}>{v}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
   return (
-    <>
-      {sec.intro?.map((para, i) => (
-        <p key={i} className="meny-intro">
-          {pickLocale(para, locale)}
+    <article className="meny-dish">
+      <h3 className="meny-dish-title">
+        {item.name}
+        {price && ` - ${price}`}
+      </h3>
+      {text.map((p, i) => (
+        <p key={i} className="meny-dish-p">
+          {p}
         </p>
       ))}
-      {sec.dishes?.map((d, i) => (
-        <article key={i} className="meny-dish">
-          <h3 className="meny-dish-title">{pickLocale(d.title, locale)}</h3>
-          {(d.paragraphs ?? []).map((p, j) => {
-            const paras = d.paragraphs ?? [];
-            const isNote = paras.length > 1 && j === paras.length - 1;
-            return (
-              <p key={j} className={isNote ? 'meny-dish-note' : 'meny-dish-p'}>
-                {pickLocale(p, locale)}
-              </p>
-            );
-          })}
-        </article>
+      {note && <p className="meny-dish-note">{note}</p>}
+    </article>
+  );
+}
+
+function MenySectionBody({ sec }) {
+  return (
+    <>
+      {categoryIntro(sec.name).map((para, i) => (
+        <p key={i} className="meny-intro">
+          {para}
+        </p>
       ))}
-      {sec.sublists?.map((sl, i) => (
-        <div key={i} className="meny-sublist">
-          <h3 className="meny-sublist-title">{pickLocale(sl.line, locale)}</h3>
-          <ul className="meny-bullets">
-            {sl.items.map((it, j) => (
-              <li key={j}>{pickLocale(it, locale)}</li>
-            ))}
-          </ul>
-        </div>
+      {sec.items.map((item) => (
+        <MenyDish key={item.menuItemId} item={item} />
       ))}
     </>
   );
 }
 
+/**
+ * Meny- och drinksidan: kategorierna och rätterna kommer från Booqy
+ * (data/booqyMenu.js), en kategori i taget som i designen.
+ */
 export default function MenyCategoryPage({
-  sections,
-  sectionKeyPrefix,
+  page,
   domPrefix,
   panelId,
   mainId,
@@ -51,13 +69,15 @@ export default function MenyCategoryPage({
   closeSheetAriaKey,
 }) {
   const { pathname } = useLocation();
-  const { t, locale } = useLanguage();
-  const [activeId, setActiveId] = useState(sections[0]?.id ?? '');
+  const { t } = useLanguage();
+  const { loading, error, retry, sections: all } = useBooqyMenu();
+  const sections = useMemo(() => all.filter((s) => s.page === page), [all, page]);
+  const [activeId, setActiveId] = useState('');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const scrollPanelAfterCategoryPickRef = useRef(false);
   const panelRef = useRef(null);
 
-  const sectionTitle = (id) => t(`${sectionKeyPrefix}.${id}`);
+  const sectionTitle = (id) => sections.find((s) => s.id === id)?.name ?? '';
 
   const activeSection = useMemo(
     () => sections.find((s) => s.id === activeId) ?? sections[0],
@@ -91,12 +111,24 @@ export default function MenyCategoryPage({
   }, [filterSheetOpen]);
 
   const selectCategory = (id) => {
-    if (id !== activeId) {
+    if (id !== activeSection?.id) {
       scrollPanelAfterCategoryPickRef.current = true;
     }
     setActiveId(id);
     setFilterSheetOpen(false);
   };
+
+  if (loading || error || !activeSection) {
+    return (
+      <main className={mainClassName} id={mainId}>
+        <header className="meny-hero">
+          <p className="meny-eyebrow">{t(heroKeys.eyebrow)}</p>
+          <h1 className="meny-title">{t(heroKeys.title)}</h1>
+        </header>
+        <MenuState loading={loading} error={error} retry={retry} />
+      </main>
+    );
+  }
 
   const headingId = activeSection ? `${domPrefix}-heading-${activeSection.id}` : undefined;
   const filterSheetDomId = `${domPrefix}-filter-sheet`;
@@ -121,9 +153,9 @@ export default function MenyCategoryPage({
                   type="button"
                   role="tab"
                   id={`${domPrefix}-tab-${s.id}`}
-                  aria-selected={activeId === s.id}
+                  aria-selected={activeSection.id === s.id}
                   aria-controls={panelId}
-                  className={`meny-filter-btn${activeId === s.id ? ' meny-filter-btn--active' : ''}`}
+                  className={`meny-filter-btn${activeSection.id === s.id ? ' meny-filter-btn--active' : ''}`}
                   onClick={() => selectCategory(s.id)}
                 >
                   {sectionTitle(s.id)}
@@ -166,7 +198,7 @@ export default function MenyCategoryPage({
                   {sectionTitle(activeSection.id)}
                 </h2>
                 <div className="meny-section-body">
-                  <MenySectionBody sec={activeSection} locale={locale} />
+                  <MenySectionBody sec={activeSection} />
                 </div>
               </div>
             </section>
@@ -198,7 +230,7 @@ export default function MenyCategoryPage({
                 <li key={s.id}>
                   <button
                     type="button"
-                    className={`meny-sheet-option${activeId === s.id ? ' meny-sheet-option--active' : ''}`}
+                    className={`meny-sheet-option${activeSection.id === s.id ? ' meny-sheet-option--active' : ''}`}
                     onClick={() => selectCategory(s.id)}
                   >
                     {sectionTitle(s.id)}
@@ -213,5 +245,21 @@ export default function MenyCategoryPage({
         </div>
       )}
     </main>
+  );
+}
+
+/** Laddning, fel eller tom meny (samma ruta på alla menysidor). */
+export function MenuState({ loading, error, retry }) {
+  const { t } = useLanguage();
+  if (loading) return <SkelCard label={t('menu.loading')} />;
+  return (
+    <div className="meny-state" role={error ? 'alert' : 'status'}>
+      <p>{error ? t('menu.error') : t('menu.empty')}</p>
+      {error && (
+        <button type="button" className="meny-state-retry" onClick={retry}>
+          {t('menu.retry')}
+        </button>
+      )}
+    </div>
   );
 }

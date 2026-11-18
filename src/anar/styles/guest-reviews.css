@@ -16,10 +16,6 @@
 }
 
 @media (max-width: 800px) {
-  .guest-reviews {
-    display: none;
-  }
-
   .booking-reviews-stack .booking,
   .booking-reviews-stack .reviews-panel-card {
     max-height: none;
@@ -43,68 +39,72 @@
   margin: 0;
 }
 
-/* Kortlek: varje kort har recension; bakre absoluta och snea, främre relativt */
+/* Kortlek (GuestReviewCards.jsx): alla kort i samma rutnätscell, så att leken
+   blir lika hög som det högsta kortet. Platsen i leken (--deck-transform,
+   --deck-opacity, z-index) sätts per kort; när det främre vänds bakåt glider
+   de andra fram ett steg med en övergång. */
 .guest-reviews-stack {
-  --guest-stack-pad-top: clamp(1.85rem, 5.5vw, 2.65rem);
   position: relative;
-  padding-top: 0;
+  display: grid;
+  padding-top: 2.6rem;
   padding-bottom: 0.35rem;
   overflow: visible;
 }
 
-.guest-reviews-stack > .guest-reviews-card:not(:last-child) {
-  position: absolute;
-  top: var(--guest-stack-pad-top);
-  left: 0;
-  right: 0;
-  width: 100%;
-  margin: 0;
-  transform-origin: 50% 100%;
-  pointer-events: none;
-}
-
-.guest-reviews-stack > .guest-reviews-card:last-child {
+.guest-reviews-stack > .guest-reviews-card {
+  grid-area: 1 / 1;
   position: relative;
-  margin-top: var(--guest-stack-pad-top);
-  z-index: 10;
+  align-self: start;
   transform-origin: 50% 100%;
+  transform: var(--deck-transform);
+  opacity: var(--deck-opacity);
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.7s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-/* nth-last-child: räkna från framsidan så stapeln funkar med 2-7 kort */
-.guest-reviews-stack > .guest-reviews-card:nth-last-child(2):not(:last-child) {
-  transform: translate(2px, -9px) scale(0.978) rotate(1.2deg) skewX(0.7deg);
-  opacity: 0.93;
-  z-index: 6;
+/* Hover-effekten sitter på kortet, inte på pekaren */
+.guest-reviews-stack:hover > .guest-reviews-card--featured {
+  transform: translateY(-3px) scale(1.01);
+  border-color: rgba(232, 212, 184, 0.75);
+  box-shadow:
+    0 0 0 1px rgba(201, 166, 107, 0.25),
+    0 26px 56px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
 }
 
-.guest-reviews-stack > .guest-reviews-card:nth-last-child(3):not(:last-child) {
-  transform: translate(-3px, -14px) scale(0.96) rotate(-2deg) skewX(-1deg);
-  opacity: 0.91;
-  z-index: 5;
+/* Det främre kortet lyfts upp, vänds och läggs sist i leken */
+.guest-reviews-stack > .guest-reviews-card--leaving {
+  animation: guest-card-to-back 0.95s cubic-bezier(0.45, 0, 0.2, 1) both;
 }
 
-.guest-reviews-stack > .guest-reviews-card:nth-last-child(4):not(:last-child) {
-  transform: translate(4px, -20px) scale(0.945) rotate(2.6deg) skewX(1.4deg);
-  opacity: 0.89;
-  z-index: 4;
+@keyframes guest-card-to-back {
+  0% {
+    transform: none;
+    opacity: 1;
+    z-index: 30;
+  }
+  42% {
+    transform: translateY(-40%) rotateX(16deg) rotate(-3deg) scale(1.02);
+    opacity: 1;
+    z-index: 30;
+  }
+  55% {
+    z-index: 0;
+  }
+  100% {
+    transform: var(--deck-transform);
+    opacity: var(--deck-opacity);
+    z-index: 0;
+  }
 }
 
-.guest-reviews-stack > .guest-reviews-card:nth-last-child(5):not(:last-child) {
-  transform: translate(-5px, -26px) scale(0.93) rotate(-3.2deg) skewX(-1.6deg);
-  opacity: 0.87;
-  z-index: 3;
-}
-
-.guest-reviews-stack > .guest-reviews-card:nth-last-child(6):not(:last-child) {
-  transform: translate(6px, -32px) scale(0.915) rotate(4.2deg) skewX(2deg);
-  opacity: 0.85;
-  z-index: 2;
-}
-
-.guest-reviews-stack > .guest-reviews-card:nth-last-child(7):not(:last-child) {
-  transform: translate(-8px, -38px) scale(0.9) rotate(-5deg) skewX(-2.2deg);
-  opacity: 0.83;
-  z-index: 1;
+@media (prefers-reduced-motion: reduce) {
+  .guest-reviews-stack > .guest-reviews-card {
+    transition: opacity 0.2s ease;
+  }
 }
 
 .guest-reviews-card {
@@ -217,4 +217,11 @@
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Smal skärm: de snedställda bakre korten får luft i sidled, aldrig utanför kanten */
+@media (max-width: 800px) {
+  .guest-reviews-stack {
+    padding-inline: 10px;
+  }
 }

@@ -12,7 +12,7 @@
     width: 100%;
     max-width: min(72rem, 100%);
     margin: 0 auto;
-    padding: 0.85rem clamp(0.65rem, 3vw, 1.25rem) 0.35rem;
+    padding: 0.85rem clamp(1rem, 3vw, 1.25rem) 0.35rem;
     box-sizing: border-box;
     border-top: 1px solid rgba(255, 245, 238, 0.1);
     direction: ltr;
@@ -118,5 +118,19 @@
 
   .opening-hours--mobile-pre-footer .opening-hours-table th {
     width: 48%;
+  }
+}
+
+/* Telefon: en tabell per rad, så att veckodagarna får plats utan att brytas */
+@media (max-width: 599px) {
+  .opening-hours--mobile-pre-footer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 800px) {
+  .opening-hours--mobile-pre-footer {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

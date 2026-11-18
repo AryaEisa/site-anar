@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const REVIEWS = [
@@ -73,19 +74,84 @@ function StarRow({ count }) {
   );
 }
 
+/** Varje plats i leken: förskjutning, skala, lutning och opacitet (0 = främst). */
+const DECK = [
+  { x: 0, y: 0, s: 1, r: 0, o: 1 },
+  { x: 2, y: -9, s: 0.978, r: 1.2, o: 0.93 },
+  { x: -3, y: -15, s: 0.96, r: -2, o: 0.91 },
+  { x: 4, y: -21, s: 0.945, r: 2.6, o: 0.89 },
+  { x: -5, y: -27, s: 0.93, r: -3.2, o: 0.87 },
+  { x: 6, y: -33, s: 0.915, r: 4.2, o: 0.85 },
+  { x: -8, y: -39, s: 0.9, r: -5, o: 0.83 },
+];
+const STEP_MS = 4800;
+const FLIP_MS = 950;
+
+function deckStyle(pos, count) {
+  const d = DECK[Math.min(pos, DECK.length - 1)];
+  return {
+    '--deck-transform': `translate(${d.x}px, ${d.y}px) scale(${d.s}) rotate(${d.r}deg)`,
+    '--deck-opacity': pos >= DECK.length ? 0 : d.o,
+    zIndex: count - pos,
+  };
+}
+
+const reducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+/**
+ * Gästomdömen som en kortlek: var femte sekund vänds det främre kortet bakåt
+ * och de bakre glider fram ett steg, i en slinga. Stannar medan man håller
+ * pekaren över leken; ett klick vänder direkt.
+ */
 export default function GuestReviewCards() {
   const { t } = useLanguage();
   const count = REVIEWS.length;
+  const [front, setFront] = useState(0);
+  const [leaving, setLeaving] = useState(null);
+  const [paused, setPaused] = useState(false);
+  const timer = useRef(null);
+
+  const flip = useCallback(() => {
+    setFront((f) => {
+      if (!reducedMotion()) {
+        setLeaving(f);
+        clearTimeout(timer.current);
+        timer.current = setTimeout(() => setLeaving(null), FLIP_MS);
+      }
+      return (f + 1) % count;
+    });
+  }, [count]);
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  useEffect(() => {
+    if (paused || count < 2) return undefined;
+    const id = setInterval(flip, STEP_MS);
+    return () => clearInterval(id);
+  }, [paused, flip, count]);
 
   return (
-    <div className="guest-reviews" aria-label={`${count} ${t('guestReviews.aria')}`}>
-      <div className="guest-reviews-stack">
+    <div
+      className="guest-reviews"
+      aria-label={`${count} ${t('guestReviews.aria')}`}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
+      <div className="guest-reviews-stack" onClick={flip}>
         {REVIEWS.map((review, index) => {
-          const isFront = index === count - 1;
+          const pos = (index - front + count) % count;
+          const isFront = pos === 0;
           return (
             <blockquote
               key={review.id}
-              className={`guest-reviews-card${isFront ? ' guest-reviews-card--featured' : ''}`}
+              className={`guest-reviews-card${isFront ? ' guest-reviews-card--featured' : ''}${
+                leaving === index ? ' guest-reviews-card--leaving' : ''
+              }`}
+              style={deckStyle(pos, count)}
+              aria-hidden={!isFront}
             >
               <div className="guest-reviews-head">
                 <span className="guest-reviews-avatar" aria-hidden="true">

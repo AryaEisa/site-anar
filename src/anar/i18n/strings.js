@@ -1,6 +1,12 @@
 /** Flat keys per locale; fallback to Swedish in t(). */
 export const STRINGS = {
   sv: {
+    'hours.sections.special': 'Avvikande dagar',
+    'menu.loading': 'Hämtar menyn',
+    'menu.error': 'Menyn kunde inte hämtas just nu. Försök igen om en stund eller ring oss.',
+    'menu.empty': 'Menyn läggs upp inom kort.',
+    'menu.retry': 'Försök igen',
+    'menu.sharedPrice': 'Gäller samtliga rätter nedan utom där annat pris anges.',
     'meta.brand': 'ANAR Restaurang & Bar',
     'pageTitle.home': 'ANAR Restaurang & Bar',
     'pageTitle.meny': 'Meny - ANAR Restaurang & Bar',
@@ -261,6 +267,12 @@ export const STRINGS = {
   },
 
   en: {
+    'hours.sections.special': 'Special days',
+    'menu.loading': 'Loading the menu',
+    'menu.error': 'The menu could not be loaded right now. Try again shortly or give us a call.',
+    'menu.empty': 'The menu will be published shortly.',
+    'menu.retry': 'Try again',
+    'menu.sharedPrice': 'Applies to all dishes below unless another price is shown.',
     'meta.brand': 'ANAR Restaurant & Bar',
     'pageTitle.home': 'ANAR Restaurant & Bar',
     'pageTitle.meny': 'Menu - ANAR Restaurant & Bar',
@@ -518,6 +530,12 @@ export const STRINGS = {
   },
 
   fa: {
+    'hours.sections.special': 'روزهای استثنایی',
+    'menu.loading': 'در حال بارگذاری منو',
+    'menu.error': 'منو در حال حاضر بارگذاری نشد. کمی بعد دوباره امتحان کنید یا با ما تماس بگیرید.',
+    'menu.empty': 'منو به‌زودی منتشر می‌شود.',
+    'menu.retry': 'دوباره امتحان کنید',
+    'menu.sharedPrice': 'برای همهٔ غذاهای زیر، مگر قیمت دیگری ذکر شده باشد.',
     'meta.brand': 'رستوران انار',
     'pageTitle.home': 'رستوران انار',
     'pageTitle.meny': 'منو - رستوران انار',

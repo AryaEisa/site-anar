@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Select, useLocationInfo } from '@bookingsystemadvancedorg/site-kit';
 import { useLanguage } from '../i18n/LanguageContext';
-
-const CONTACT_EMAIL = 'info@anarrestaurang.se';
 
 const SUBJECT_OPTIONS = [
   { value: 'rekommendation' },
@@ -12,6 +11,8 @@ const SUBJECT_OPTIONS = [
 
 export default function KontaktPage() {
   const { t } = useLanguage();
+  // Meddelandet går till platsens e-post i Booqy (gästens e-postprogram öppnas).
+  const { email: CONTACT_EMAIL } = useLocationInfo();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
@@ -73,24 +74,20 @@ export default function KontaktPage() {
           </div>
 
           <div className="kontakt-form-field">
-            <label htmlFor="kontakt-subject">{t('kontakt.subject')}</label>
-            <select
+            <label htmlFor="kontakt-subject" id="kontakt-subject-label">{t('kontakt.subject')}</label>
+            <Select
               id="kontakt-subject"
               name="subject"
               required
               value={subject}
-              onChange={(e) => setSubject(e.target.value)}
+              onChange={setSubject}
               className="kontakt-form-select"
-            >
-              <option value="" disabled>
-                {t('kontakt.subjectPlaceholder')}
-              </option>
-              {SUBJECT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {t(`kontakt.subject.${opt.value}`)}
-                </option>
-              ))}
-            </select>
+              placeholder={t('kontakt.subjectPlaceholder')}
+              options={SUBJECT_OPTIONS.map((opt) => ({
+                value: opt.value,
+                label: t(`kontakt.subject.${opt.value}`),
+              }))}
+            />
           </div>
 
           <div className="kontakt-form-field">

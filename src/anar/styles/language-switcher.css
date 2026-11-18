@@ -5,74 +5,48 @@
   unicode-bidi: isolate;
 }
 
+/* Figma 1440: raden har 48 px till höger, 5.6 över och 8.8 under */
 .language-switcher {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   width: 100%;
-  padding: 0.35rem 0 0.55rem;
+  padding: 0.35rem clamp(1rem, 3.34vw, 3rem) 0.55rem;
   box-sizing: border-box;
 }
 
-.language-switcher-select-wrap {
-  position: relative;
+/* Kitets Select (.combo) som Anars pill: svart glas, vit 2 px kant */
+.language-switcher .language-switcher-select {
   min-width: 10.5rem;
-}
-
-.language-switcher-select-wrap::after {
-  content: '';
-  position: absolute;
-  right: 0.75rem;
-  left: auto;
-  top: 50%;
-  width: 0.5rem;
-  height: 0.5rem;
-  margin-top: -0.28rem;
-  border-right: 2px solid #fff;
-  border-bottom: 2px solid #fff;
-  transform: rotate(45deg);
-  opacity: 0.95;
-  pointer-events: none;
-}
-
-.language-switcher-select {
-  display: block;
-  width: 100%;
-  margin: 0;
-  appearance: none;
-  -webkit-appearance: none;
-  font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1.35;
-  padding: 0.45rem 2.25rem 0.45rem 1rem;
+  min-height: 0;
+  padding: 0.4375rem 2.25rem 0.4375rem 1rem;
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.55);
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
-  cursor: pointer;
-  text-align: left;
+  font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.26;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.language-switcher-select:hover {
+.language-switcher .language-switcher-select:hover {
   background: rgba(0, 0, 0, 0.72);
   border-color: rgba(255, 255, 255, 0.85);
 }
 
-.language-switcher-select:focus {
-  outline: none;
+.language-switcher .language-switcher-select:focus-visible,
+.language-switcher .language-switcher-select[aria-expanded='true'] {
   border-color: #fff;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
 }
 
-.language-switcher-select option {
-  background: #1f1818;
+.language-switcher .language-switcher-select .combo-chevron {
   color: #fff;
-  font-weight: 500;
 }
 
-html[lang='fa'] .language-switcher-select {
+html[lang='fa'] .language-switcher .language-switcher-select {
   font-family: 'Vazirmatn', var(--font-sans, 'Outfit', system-ui, sans-serif);
 }

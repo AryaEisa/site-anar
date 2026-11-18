@@ -1,11 +1,9 @@
 import MenyCategoryPage from '../components/MenyCategoryPage';
-import { menySections } from '../data/menyData';
 
 export default function MenyPage() {
   return (
     <MenyCategoryPage
-      sections={menySections}
-      sectionKeyPrefix="meny.sec"
+      page="meny"
       domPrefix="meny"
       panelId="meny-panel"
       mainId="meny-innehall"

@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
-import { kolgrillDishes } from '../data/kolgrillData';
+import { MenuState } from '../components/MenyCategoryPage';
+import { descriptionParts, priceText, useBooqyMenu } from '../data/booqyMenu';
 import { useLanguage } from '../i18n/LanguageContext';
-import { pickLocale } from '../i18n/localeText';
 
+/** Kolgrill: rätterna i Booqys kolgrillkategorier (data/booqyMenu.js). */
 export default function KolgrillPage() {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
+  const { loading, error, retry, sections } = useBooqyMenu();
+  const dishes = sections.filter((s) => s.page === 'kolgrill').flatMap((s) => s.items);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,27 +23,32 @@ export default function KolgrillPage() {
         </div>
       </header>
 
-      <section className="kolgrill-panel" aria-label={t('kolgrill.panelAria')}>
-        <div className="kolgrill-dishes">
-          {kolgrillDishes.map((d, di) => (
-            <article key={`kol-${di}`} className="kolgrill-dish">
-              <h2 className="kolgrill-dish-title">{pickLocale(d.title, locale)}</h2>
-              {d.paragraphs.map((p, i) => (
-                <p
-                  key={i}
-                  className={
-                    d.paragraphs.length > 1 && i === d.paragraphs.length - 1
-                      ? 'kolgrill-dish-note'
-                      : 'kolgrill-dish-text'
-                  }
-                >
-                  {pickLocale(p, locale)}
-                </p>
-              ))}
-            </article>
-          ))}
-        </div>
-      </section>
+      {dishes.length === 0 ? (
+        <MenuState loading={loading} error={error} retry={retry} />
+      ) : (
+        <section className="kolgrill-panel" aria-label={t('kolgrill.panelAria')}>
+          <div className="kolgrill-dishes">
+            {dishes.map((d) => {
+              const price = priceText(d);
+              const { text, note } = descriptionParts(d);
+              return (
+                <article key={d.menuItemId} className="kolgrill-dish">
+                  <h2 className="kolgrill-dish-title">
+                    {d.name}
+                    {price && ` - ${price}`}
+                  </h2>
+                  {text.map((p, i) => (
+                    <p key={i} className="kolgrill-dish-text">
+                      {p}
+                    </p>
+                  ))}
+                  {note && <p className="kolgrill-dish-note">{note}</p>}
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

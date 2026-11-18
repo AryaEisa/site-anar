@@ -1,11 +1,9 @@
 import MenyCategoryPage from '../components/MenyCategoryPage';
-import { drinkMenySections } from '../data/drinkMenyData';
 
 export default function DrinkMenyPage() {
   return (
     <MenyCategoryPage
-      sections={drinkMenySections}
-      sectionKeyPrefix="drink.sec"
+      page="drink"
       domPrefix="drink"
       panelId="drink-meny-panel"
       mainId="drinkmeny-innehall"

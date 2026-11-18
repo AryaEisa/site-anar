@@ -88,8 +88,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.28rem;
+  margin: 0;
+  line-height: 1.26;
   font-family: 'Outfit', system-ui, sans-serif;
-  font-size: clamp(0.78rem, 1.05vw, 0.95rem);
+  font-size: clamp(0.78rem, 1.05vw, 0.94375rem);
   font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -118,13 +120,16 @@
   height: 0.35rem;
   border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
-  transform: rotate(45deg) translateY(-2px);
+  /* Ritas runt sin mitt så att texten ligger kvar på samma linje som länkarna */
+  transform: rotate(45deg);
+  margin-top: -0.2rem;
   opacity: 0.85;
   transition: transform 0.2s ease;
 }
 
 .site-header-dropdown-chevron--open {
-  transform: rotate(225deg) translateY(2px);
+  transform: rotate(225deg);
+  margin-top: 0.15rem;
 }
 
 /* Desktop: öppettider som popup (2×2-rutnät) */

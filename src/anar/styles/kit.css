@@ -43,7 +43,7 @@ html[lang='fa'] {
   width: 100%;
   max-width: min(72rem, 100%);
   margin: 0 auto;
-  padding: clamp(0.75rem, 3vw, 2rem) clamp(0.65rem, 3vw, 1.5rem) clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(0.75rem, 3vw, 2rem) clamp(1rem, 3vw, 1.5rem) clamp(1.5rem, 4vw, 3rem);
   box-sizing: border-box;
 }
 
@@ -90,4 +90,83 @@ html[lang='fa'] {
 .site-footer-booqy {
   vertical-align: middle;
   margin-inline-start: 0.2em;
+}
+
+/* Kitets rullistor (portal i body): Anars mörka glas och guld */
+.combo-pop {
+  background: rgba(18, 11, 9, 0.96);
+  border-color: rgba(201, 166, 107, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.5);
+}
+
+.combo-option {
+  color: rgba(255, 245, 238, 0.88);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.combo-option.is-active,
+.combo-option:hover {
+  background: rgba(201, 166, 107, 0.16);
+  color: #fff8f2;
+}
+
+.combo-option.is-selected {
+  color: #e8d4b8;
+}
+
+/* Stegraden (Dag & sällskap ... Klart) i Anars smalare panel: raden får
+   bryta och centreras, så att sista steget aldrig hamnar mot kanten. */
+.kit-panel .flow {
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 0.65rem;
+  padding-inline: 0.25rem;
+}
+
+.kit-panel .flow-step + .flow-step {
+  flex: 0 0 auto;
+}
+
+.kit-panel .flow-step + .flow-step::before {
+  flex: 0 0 1.1rem;
+  min-width: 0;
+  margin: 0 0.55rem;
+}
+
+/* Menysidornas laddning/fel/tom meny */
+.meny-state {
+  max-width: 36rem;
+  margin: 1rem auto 0;
+  padding: 1.5rem 1.6rem;
+  text-align: center;
+  font-family: 'Outfit', sans-serif;
+  color: rgba(255, 245, 238, 0.85);
+  background: linear-gradient(135deg, rgba(20, 14, 12, 0.5), rgba(12, 9, 8, 0.55));
+  border: 1px solid rgba(201, 166, 107, 0.24);
+  border-radius: 12px;
+}
+
+.meny-state p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.meny-state-retry {
+  margin-top: 1rem;
+  padding: 0.6rem 1.4rem;
+  font: 600 0.9rem 'Outfit', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 248, 242, 0.95);
+  background: rgba(12, 8, 6, 0.55);
+  border: 1px solid rgba(201, 166, 107, 0.5);
+  border-radius: 4px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.meny-state-retry:hover {
+  border-color: rgba(232, 212, 184, 0.9);
+  background: rgba(40, 26, 18, 0.7);
 }

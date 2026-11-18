@@ -10,6 +10,8 @@ export default function Footer() {
   const { t } = useLanguage();
   const { config } = useSite();
   const year = new Date().getFullYear();
+  // Bolagsnamn och organisationsnummer från Booqy (versaler som i designen).
+  const legalName = (config.legal.legalName || config.tenant.name).toUpperCase();
 
   return (
     <footer className="site-footer">
@@ -20,17 +22,12 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="site-footer-org-name">ANAR AB</span>
-          <span className="site-footer-org-number">559368-7014</span>
+          <span className="site-footer-org-name">{legalName}</span>
+          {config.legal.orgNumber && <span className="site-footer-org-number">{config.legal.orgNumber}</span>}
         </a>
         <p className="site-footer-rights">
-          © {year} ANAR AB. {t('footer.rights')}
+          © {year} {legalName}. {t('footer.rights')}
         </p>
-        <nav className="site-footer-legal" aria-label="Juridiskt">
-          <Link to="/integritetspolicy">Integritetspolicy</Link>
-          <Link to="/cookies">Cookies</Link>
-          {config.tenant.features.reservations && <Link to="/bokningsvillkor">Bokningsvillkor</Link>}
-        </nav>
         <div className="site-footer-credit-block">
           <p className="site-footer-credit">{t('footer.credit')}</p>
           <p className="site-footer-dev-site">
@@ -43,10 +40,17 @@ export default function Footer() {
               www.aryaeisa.com
             </a>
           </p>
-          <p className="site-footer-credit">
-            Drivs av <BooqyWordmark className="site-footer-booqy" />
-          </p>
         </div>
+      </div>
+      <div className="site-footer-sub">
+        <nav className="site-footer-legal" aria-label="Juridiskt">
+          <Link to="/integritetspolicy">Integritetspolicy</Link>
+          <Link to="/cookies">Cookies</Link>
+          {config.tenant.features.reservations && <Link to="/bokningsvillkor">Bokningsvillkor</Link>}
+        </nav>
+        <p className="site-footer-credit">
+          Drivs av <BooqyWordmark className="site-footer-booqy" />
+        </p>
       </div>
     </footer>
   );

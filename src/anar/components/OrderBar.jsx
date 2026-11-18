@@ -32,11 +32,9 @@ export default function OrderBar() {
             {t('orderBar.pickup')}
           </Link>
         )}
-        {!onBestallPage ? (
-          <Link className="order-bar-cta" to="/bestall-hem">
-            {t('orderBar.orderHome')}
-          </Link>
-        ) : null}
+        <Link className="order-bar-cta" to="/bestall-hem" aria-current={onBestallPage ? 'page' : undefined}>
+          {t('orderBar.orderHome')}
+        </Link>
       </div>
     </section>
   );
