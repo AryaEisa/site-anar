@@ -11,44 +11,51 @@ import {
   PrivacyPolicy,
   useSite,
 } from '@bookingsystemadvancedorg/site-kit'
-import { CustomerLayout } from './shared/CustomerLayout'
-import MenyPage from './features/meny/MenyPage'
-import KontaktPage from './features/kontakt/KontaktPage'
-import OmOssPage from './features/om/OmOssPage'
+import SiteLayout from './anar/layouts/SiteLayout'
+import KitPage from './anar/layouts/KitPage'
+import HomePage from './anar/pages/HomePage'
+import MenyPage from './anar/pages/MenyPage'
+import DrinkMenyPage from './anar/pages/DrinkMenyPage'
+import DagensLunchPage from './anar/pages/DagensLunchPage'
+import KolgrillPage from './anar/pages/KolgrillPage'
+import HistoriaPage from './anar/pages/HistoriaPage'
+import ParkeringPage from './anar/pages/ParkeringPage'
+import KontaktPage from './anar/pages/KontaktPage'
+import BestallHemPage from './anar/pages/BestallHemPage'
 
 /**
- * Restaurangens publika webbplats - samma sajt för alla restauranger, med
- * innehållet från GET /site-config. Flödena (boka, beställ, catering,
- * juridik) kommer från @bookingsystemadvancedorg/site-kit; den här appen är layouten, sidorna
- * och looken. Menyn är startsida;
- * okända sökvägar skickas dit. Boka bord och dess sidor finns bara när
- * restaurangen har bokning i sin plan; Beställ (avhämtning och QR-koden på
- * bordet) bara med beställning i planen. Gästens sidor för en gjord
- * bokning/beställning (länkar i sms och mejl) finns alltid. Catering
- * (kalkyl -> offertförfrågan) med catering i planen; gästens sida för en
- * förfrågan (offert, BankID-signering, betalning) finns alltid.
+ * Anars publika webbplats. Utseendet och sidorna (src/anar) är Anars egna;
+ * flödena (boka, beställ, catering, juridik) kommer från
+ * @bookingsystemadvancedorg/site-kit och visas i KitPage. Boka bord, Beställ
+ * och Catering finns bara när restaurangens plan har dem; gästens sidor för
+ * en gjord bokning/beställning/förfrågan (länkar i sms och mejl) finns alltid.
  */
 function App() {
   const { config } = useSite()
-  const reservations = config.tenant.features.reservations
-  const ordering = config.tenant.features.ordering
-  const catering = config.tenant.features.catering
+  const { reservations, ordering, catering } = config.tenant.features
   return (
     <Routes>
-      <Route element={<CustomerLayout />}>
-        <Route index element={<MenyPage />} />
+      <Route element={<SiteLayout />}>
+        <Route index element={<HomePage />} />
         <Route path="meny" element={<MenyPage />} />
-        {reservations && <Route path="boka-bord" element={<BookingFlow />} />}
-        {reservations && <Route path="bokningsvillkor" element={<BookingTermsPage />} />}
-        <Route path="bokning/:locationId/:reservationId" element={<ManageBooking />} />
-        {ordering && <Route path="bestall" element={<OrderFlow />} />}
-        <Route path="bestallning/:locationId/:orderId" element={<OrderStatus />} />
-        {catering && <Route path="catering" element={<CateringFlow />} />}
-        <Route path="catering/:locationId/:requestId" element={<CateringRequest />} />
-        <Route path="om-oss" element={<OmOssPage />} />
+        <Route path="drinkmeny" element={<DrinkMenyPage />} />
+        <Route path="dagens-lunch" element={<DagensLunchPage />} />
+        <Route path="kolgrill" element={<KolgrillPage />} />
+        <Route path="historia" element={<HistoriaPage />} />
+        <Route path="parkering" element={<ParkeringPage />} />
         <Route path="kontakt" element={<KontaktPage />} />
-        <Route path="integritetspolicy" element={<PrivacyPolicy />} />
-        <Route path="cookies" element={<CookiePolicy />} />
+        <Route path="bestall-hem" element={<BestallHemPage />} />
+        <Route element={<KitPage />}>
+          {reservations && <Route path="boka-bord" element={<BookingFlow />} />}
+          {reservations && <Route path="bokningsvillkor" element={<BookingTermsPage />} />}
+          <Route path="bokning/:locationId/:reservationId" element={<ManageBooking />} />
+          {ordering && <Route path="bestall" element={<OrderFlow />} />}
+          <Route path="bestallning/:locationId/:orderId" element={<OrderStatus />} />
+          {catering && <Route path="catering" element={<CateringFlow />} />}
+          <Route path="catering/:locationId/:requestId" element={<CateringRequest />} />
+          <Route path="integritetspolicy" element={<PrivacyPolicy />} />
+          <Route path="cookies" element={<CookiePolicy />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

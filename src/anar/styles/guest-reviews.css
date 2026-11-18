@@ -1,0 +1,220 @@
+.booking-reviews-stack {
+  width: 100%;
+  /* Header + beställ-rad (gästexempel ligger i omdömeskolumnen) */
+  --br-reserved: clamp(8.75rem, 22svh, 12.25rem);
+}
+
+@media (min-width: 801px) {
+  .booking-reviews-stack {
+    --br-reserved: clamp(9.5rem, 21svh, 12rem);
+  }
+}
+
+.booking-reviews-stack .booking,
+.booking-reviews-stack .reviews-panel-card {
+  max-height: calc(100svh - var(--br-reserved));
+}
+
+@media (max-width: 800px) {
+  .guest-reviews {
+    display: none;
+  }
+
+  .booking-reviews-stack .booking,
+  .booking-reviews-stack .reviews-panel-card {
+    max-height: none;
+  }
+
+  .booking-reviews-stack .booking-card {
+    max-height: none;
+    overflow-y: visible;
+    overscroll-behavior: auto;
+    scrollbar-gutter: auto;
+  }
+}
+
+.guest-reviews {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.reviews-column .guest-reviews {
+  max-width: none;
+  margin: 0;
+}
+
+/* Kortlek: varje kort har recension; bakre absoluta och snea, främre relativt */
+.guest-reviews-stack {
+  --guest-stack-pad-top: clamp(1.85rem, 5.5vw, 2.65rem);
+  position: relative;
+  padding-top: 0;
+  padding-bottom: 0.35rem;
+  overflow: visible;
+}
+
+.guest-reviews-stack > .guest-reviews-card:not(:last-child) {
+  position: absolute;
+  top: var(--guest-stack-pad-top);
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+}
+
+.guest-reviews-stack > .guest-reviews-card:last-child {
+  position: relative;
+  margin-top: var(--guest-stack-pad-top);
+  z-index: 10;
+  transform-origin: 50% 100%;
+}
+
+/* nth-last-child: räkna från framsidan så stapeln funkar med 2-7 kort */
+.guest-reviews-stack > .guest-reviews-card:nth-last-child(2):not(:last-child) {
+  transform: translate(2px, -9px) scale(0.978) rotate(1.2deg) skewX(0.7deg);
+  opacity: 0.93;
+  z-index: 6;
+}
+
+.guest-reviews-stack > .guest-reviews-card:nth-last-child(3):not(:last-child) {
+  transform: translate(-3px, -14px) scale(0.96) rotate(-2deg) skewX(-1deg);
+  opacity: 0.91;
+  z-index: 5;
+}
+
+.guest-reviews-stack > .guest-reviews-card:nth-last-child(4):not(:last-child) {
+  transform: translate(4px, -20px) scale(0.945) rotate(2.6deg) skewX(1.4deg);
+  opacity: 0.89;
+  z-index: 4;
+}
+
+.guest-reviews-stack > .guest-reviews-card:nth-last-child(5):not(:last-child) {
+  transform: translate(-5px, -26px) scale(0.93) rotate(-3.2deg) skewX(-1.6deg);
+  opacity: 0.87;
+  z-index: 3;
+}
+
+.guest-reviews-stack > .guest-reviews-card:nth-last-child(6):not(:last-child) {
+  transform: translate(6px, -32px) scale(0.915) rotate(4.2deg) skewX(2deg);
+  opacity: 0.85;
+  z-index: 2;
+}
+
+.guest-reviews-stack > .guest-reviews-card:nth-last-child(7):not(:last-child) {
+  transform: translate(-8px, -38px) scale(0.9) rotate(-5deg) skewX(-2.2deg);
+  opacity: 0.83;
+  z-index: 1;
+}
+
+.guest-reviews-card {
+  margin: 0;
+  width: 100%;
+  padding: 0.75rem 0.85rem 0.85rem;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(18, 16, 16, 0.98) 0%, rgba(10, 9, 9, 0.99) 50%, rgba(8, 7, 7, 1) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 20px 48px rgba(0, 0, 0, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.guest-reviews-card--featured {
+  padding-top: 0.95rem;
+}
+
+/* Tunn ljus kant längs överkant (Google-liknande kortaccent) */
+.guest-reviews-card--featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.75) 45%,
+    rgba(255, 255, 255, 0.75) 55%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  pointer-events: none;
+}
+
+.guest-reviews-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.3rem;
+  padding-top: 0.1rem;
+}
+
+.guest-reviews-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255, 248, 242, 0.96);
+  background: linear-gradient(145deg, rgba(120, 55, 75, 0.95), rgba(45, 22, 52, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  flex-shrink: 0;
+}
+
+.guest-reviews-name {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-style: normal;
+  color: rgba(255, 248, 242, 0.96);
+}
+
+.guest-reviews-meta {
+  margin: 0.06rem 0 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.58rem;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.guest-reviews-stars {
+  display: flex;
+  gap: 0.04rem;
+  margin-bottom: 0.3rem;
+}
+
+.guest-reviews-star {
+  font-size: 0.72rem;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.guest-reviews-star--on {
+  color: #f4b400;
+  text-shadow: 0 0 14px rgba(244, 180, 0, 0.32);
+}
+
+.guest-reviews-quote {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.38;
+  color: rgba(255, 255, 255, 0.96);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

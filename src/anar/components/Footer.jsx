@@ -1,0 +1,53 @@
+import { Link } from 'react-router-dom';
+import { useSite } from '@bookingsystemadvancedorg/site-kit';
+import { BooqyWordmark } from '../../shared/BooqyWordmark';
+import { useLanguage } from '../i18n/LanguageContext';
+
+const ALLABOLAG_URL =
+  'https://www.allabolag.se/foretag/anar-ab/link%C3%B6ping/restauranger/2KIC4IUI5YH9F';
+
+export default function Footer() {
+  const { t } = useLanguage();
+  const { config } = useSite();
+  const year = new Date().getFullYear();
+
+  return (
+    <footer className="site-footer">
+      <div className="site-footer-main">
+        <a
+          className="site-footer-org"
+          href={ALLABOLAG_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span className="site-footer-org-name">ANAR AB</span>
+          <span className="site-footer-org-number">559368-7014</span>
+        </a>
+        <p className="site-footer-rights">
+          © {year} ANAR AB. {t('footer.rights')}
+        </p>
+        <nav className="site-footer-legal" aria-label="Juridiskt">
+          <Link to="/integritetspolicy">Integritetspolicy</Link>
+          <Link to="/cookies">Cookies</Link>
+          {config.tenant.features.reservations && <Link to="/bokningsvillkor">Bokningsvillkor</Link>}
+        </nav>
+        <div className="site-footer-credit-block">
+          <p className="site-footer-credit">{t('footer.credit')}</p>
+          <p className="site-footer-dev-site">
+            <a
+              className="site-footer-dev-link"
+              href="https://www.aryaeisa.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              www.aryaeisa.com
+            </a>
+          </p>
+          <p className="site-footer-credit">
+            Drivs av <BooqyWordmark className="site-footer-booqy" />
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
