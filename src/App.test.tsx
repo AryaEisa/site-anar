@@ -4,13 +4,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SiteProvider } from '@bookingsystemadvancedorg/site-kit'
 import { json, siteConfig } from '@bookingsystemadvancedorg/site-kit/testing'
 import App from './App'
+import { LanguageProvider } from './anar/i18n/LanguageContext'
 
 function renderSite() {
   return render(
     <MemoryRouter>
-      <SiteProvider>
-        <App />
-      </SiteProvider>
+      <LanguageProvider>
+        <SiteProvider>
+          <App />
+        </SiteProvider>
+      </LanguageProvider>
     </MemoryRouter>,
   )
 }
@@ -22,7 +25,7 @@ afterEach(() => {
 })
 
 describe('App on SiteProvider', () => {
-  it('renders the restaurant from /site-config - its name, legal entity and nav', async () => {
+  it("renders Anar's shell on the restaurant from /site-config - nav, booking button and legal links", async () => {
     window.history.replaceState(null, '', '/?restaurang=testkrogen')
     const fetchMock = vi.fn(async (url: string) => {
       if (url.includes('/site-config')) return json(siteConfig())
@@ -32,13 +35,12 @@ describe('App on SiteProvider', () => {
 
     renderSite()
 
-    expect(await screen.findByRole('link', { name: 'Testkrogen - startsida' })).toBeInTheDocument()
+    expect((await screen.findAllByRole('link', { name: 'Meny' })).length).toBeGreaterThan(0)
     expect(fetchMock.mock.calls[0][0]).toBe('https://api.test/site-config?slug=testkrogen')
     expect(screen.getAllByRole('link', { name: 'Boka bord' }).length).toBeGreaterThan(0)
-    expect(screen.getByText(/Testkrogen AB/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Beställ hem' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Integritetspolicy' })).toBeInTheDocument()
-    expect(document.body.textContent).not.toMatch(/anar/i)
-    expect(document.title).toBe('Testkrogen')
+    expect(screen.getByRole('link', { name: 'Cookies' })).toBeInTheDocument()
   })
 
   it('hides booking when the plan has no reservations', async () => {
@@ -50,8 +52,9 @@ describe('App on SiteProvider', () => {
 
     renderSite()
 
-    await screen.findByRole('link', { name: 'Testkrogen - startsida' })
+    await screen.findAllByRole('link', { name: 'Meny' })
     expect(screen.queryByRole('link', { name: 'Boka bord' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Bokningsvillkor' })).not.toBeInTheDocument()
   })
 
   it('shows Presentkort and Evenemang only with those features in the plan', async () => {
@@ -63,7 +66,7 @@ describe('App on SiteProvider', () => {
 
     renderSite()
 
-    await screen.findByRole('link', { name: 'Testkrogen - startsida' })
+    await screen.findAllByRole('link', { name: 'Meny' })
     expect(screen.getAllByRole('link', { name: 'Presentkort' }).length).toBeGreaterThan(0)
     expect(screen.getAllByRole('link', { name: 'Evenemang' }).length).toBeGreaterThan(0)
   })

@@ -1,0 +1,78 @@
+/* LTR-ö: språklisten ska ligga kvar på fysiskt höger även när sidan är RTL (persiska). */
+.language-switcher-ltr {
+  direction: ltr;
+  width: 100%;
+  unicode-bidi: isolate;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 0.35rem 0 0.55rem;
+  box-sizing: border-box;
+}
+
+.language-switcher-select-wrap {
+  position: relative;
+  min-width: 10.5rem;
+}
+
+.language-switcher-select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 0.75rem;
+  left: auto;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-top: -0.28rem;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.language-switcher-select {
+  display: block;
+  width: 100%;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font-sans, 'Outfit', system-ui, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 0.45rem 2.25rem 0.45rem 1rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.language-switcher-select:hover {
+  background: rgba(0, 0, 0, 0.72);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.language-switcher-select:focus {
+  outline: none;
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+}
+
+.language-switcher-select option {
+  background: #1f1818;
+  color: #fff;
+  font-weight: 500;
+}
+
+html[lang='fa'] .language-switcher-select {
+  font-family: 'Vazirmatn', var(--font-sans, 'Outfit', system-ui, sans-serif);
+}

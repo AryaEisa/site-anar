@@ -2,13 +2,20 @@ import { lazy } from 'react'
 import type { ReactNode } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { isTableQrLink, sitePages, useSite } from '@bookingsystemadvancedorg/site-kit'
-import { CustomerLayout } from './shared/CustomerLayout'
-import MenyPage from './features/meny/MenyPage'
-import KontaktPage from './features/kontakt/KontaktPage'
-import OmOssPage from './features/om/OmOssPage'
+import SiteLayout from './anar/layouts/SiteLayout'
+import KitPage from './anar/layouts/KitPage'
+import HomePage from './anar/pages/HomePage'
+import MenyPage from './anar/pages/MenyPage'
+import DrinkMenyPage from './anar/pages/DrinkMenyPage'
+import DagensLunchPage from './anar/pages/DagensLunchPage'
+import KolgrillPage from './anar/pages/KolgrillPage'
+import HistoriaPage from './anar/pages/HistoriaPage'
+import ParkeringPage from './anar/pages/ParkeringPage'
+import KontaktPage from './anar/pages/KontaktPage'
+import BestallHemPage from './anar/pages/BestallHemPage'
 
-// Flödena hämtas först när gästen öppnar dem (menyn, startsidan, är med från
-// början); CustomerLayout visar ett skelett under tiden.
+// Flödena hämtas först när gästen öppnar dem (Anars egna sidor och startsidan
+// är med från början); SiteLayout visar ett skelett under tiden.
 const BookingFlow = lazy(sitePages.booking)
 const ManageBooking = lazy(sitePages.manageBooking)
 const OrderFlow = lazy(sitePages.order)
@@ -28,15 +35,14 @@ const Tickets = lazy(sitePages.biljett)
 const TicketReceive = lazy(sitePages.biljettTaEmot)
 
 /**
- * Restaurangens publika webbplats - samma sajt för alla restauranger, med
- * innehållet från GET /site-config. Flödena (boka, beställ, catering,
- * presentkort, kö, evenemang, juridik) kommer från
- * @bookingsystemadvancedorg/site-kit; den här appen är layouten, sidorna och
- * looken. Menyn är startsida; okända sökvägar skickas dit. Varje flöde finns
- * bara med funktionen i planen (kö dessutom bara när platsen tar emot kö på
- * sajten). En gammal QR-kod från ett bord (/bestall?bord=...) visar alltid
- * "Beställ och betala i kassan". Gästens sidor för en gjord
+ * Anars publika webbplats. Utseendet och sidorna (src/anar) är Anars egna;
+ * flödena (boka, beställ, catering, presentkort, kö, evenemang, juridik)
+ * kommer från @bookingsystemadvancedorg/site-kit och visas i KitPage. Varje
+ * flöde finns bara med funktionen i planen (kö dessutom bara när platsen tar
+ * emot kö på sajten). En gammal QR-kod från ett bord (/bestall?bord=...) visar
+ * alltid "Beställ och betala i kassan". Gästens sidor för en gjord
  * bokning/beställning/cateringförfrågan (länkar i sms och mejl) finns alltid.
+ * Beställ hem (Uber Eats/foodora) är Anars egen sida på /bestall-hem.
  */
 function App() {
   const { config, location } = useSite()
@@ -48,27 +54,34 @@ function App() {
   const events = config.tenant.features.events
   return (
     <Routes>
-      <Route element={<CustomerLayout />}>
-        <Route index element={<MenyPage />} />
+      <Route element={<SiteLayout />}>
+        <Route index element={<HomePage />} />
         <Route path="meny" element={<MenyPage />} />
-        {reservations && <Route path="boka-bord" element={<BookingFlow />} />}
-        {reservations && <Route path="bokningsvillkor" element={<BookingTermsPage />} />}
-        <Route path="bokning/:locationId/:reservationId" element={<ManageBooking />} />
-        <Route path="bestall" element={<Bestall order={ordering ? <OrderFlow /> : null} kassan={<Kassan />} />} />
-        <Route path="bestallning/:locationId/:orderId" element={<OrderStatus />} />
-        {catering && <Route path="catering" element={<CateringFlow />} />}
-        <Route path="catering/:locationId/:requestId" element={<CateringRequest />} />
-        {giftCards && <Route path="presentkort" element={<GiftCards />} />}
-        {giftCards && <Route path="presentkort/saldo" element={<GiftCardBalance />} />}
-        {queue && <Route path="ko" element={<Queue />} />}
-        {events && <Route path="evenemang" element={<Events />} />}
-        {events && <Route path="evenemang/:eventId" element={<EventDetail />} />}
-        {events && <Route path="biljett" element={<Tickets />} />}
-        {events && <Route path="biljett/ta-emot" element={<TicketReceive />} />}
-        <Route path="om-oss" element={<OmOssPage />} />
+        <Route path="drinkmeny" element={<DrinkMenyPage />} />
+        <Route path="dagens-lunch" element={<DagensLunchPage />} />
+        <Route path="kolgrill" element={<KolgrillPage />} />
+        <Route path="historia" element={<HistoriaPage />} />
+        <Route path="parkering" element={<ParkeringPage />} />
         <Route path="kontakt" element={<KontaktPage />} />
-        <Route path="integritetspolicy" element={<PrivacyPolicy />} />
-        <Route path="cookies" element={<CookiePolicy />} />
+        <Route path="bestall-hem" element={<BestallHemPage />} />
+        <Route element={<KitPage />}>
+          {reservations && <Route path="boka-bord" element={<BookingFlow />} />}
+          {reservations && <Route path="bokningsvillkor" element={<BookingTermsPage />} />}
+          <Route path="bokning/:locationId/:reservationId" element={<ManageBooking />} />
+          <Route path="bestall" element={<Bestall order={ordering ? <OrderFlow /> : null} kassan={<Kassan />} />} />
+          <Route path="bestallning/:locationId/:orderId" element={<OrderStatus />} />
+          {catering && <Route path="catering" element={<CateringFlow />} />}
+          <Route path="catering/:locationId/:requestId" element={<CateringRequest />} />
+          {giftCards && <Route path="presentkort" element={<GiftCards />} />}
+          {giftCards && <Route path="presentkort/saldo" element={<GiftCardBalance />} />}
+          {queue && <Route path="ko" element={<Queue />} />}
+          {events && <Route path="evenemang" element={<Events />} />}
+          {events && <Route path="evenemang/:eventId" element={<EventDetail />} />}
+          {events && <Route path="biljett" element={<Tickets />} />}
+          {events && <Route path="biljett/ta-emot" element={<TicketReceive />} />}
+          <Route path="integritetspolicy" element={<PrivacyPolicy />} />
+          <Route path="cookies" element={<CookiePolicy />} />
+        </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -1,0 +1,377 @@
+/* Beställ hem / leverans */
+
+.bestall-hem {
+  width: 100%;
+  max-width: min(40rem, 100%);
+  margin: 0 auto;
+  padding: clamp(0.35rem, 2vw, 1rem) clamp(0.75rem, 3vw, 1.5rem) clamp(2.5rem, 6vw, 4rem);
+  box-sizing: border-box;
+}
+
+.bestall-hem-hero {
+  text-align: center;
+  margin-bottom: clamp(1.25rem, 3.5vw, 1.85rem);
+  padding: clamp(1.1rem, 3vw, 1.45rem) clamp(1rem, 3vw, 1.5rem);
+  border-radius: 12px;
+  background: rgba(8, 6, 8, 0.62);
+  border: 1px solid rgba(255, 245, 238, 0.14);
+  box-shadow:
+    0 4px 28px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 248, 242, 0.06);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+}
+
+.bestall-hem-eyebrow {
+  margin: 0 0 0.4rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(232, 212, 184, 0.98);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.85),
+    0 0 20px rgba(0, 0, 0, 0.45);
+}
+
+.bestall-hem-title {
+  margin: 0 0 0.55rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 5.5vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: rgba(255, 248, 242, 0.99);
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.75),
+    0 4px 28px rgba(0, 0, 0, 0.55),
+    0 0 1px rgba(0, 0, 0, 0.9);
+}
+
+.bestall-hem-intro {
+  margin: 0 auto;
+  max-width: 26rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgba(255, 245, 238, 0.94);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 2px 16px rgba(0, 0, 0, 0.45);
+}
+
+.bestall-hem-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 3vw, 1.35rem);
+}
+
+@media (min-width: 640px) {
+  .bestall-hem-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+}
+
+.bestall-hem-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: inherit;
+  padding: clamp(1.15rem, 3vw, 1.5rem);
+  border-radius: 12px;
+  background: linear-gradient(
+    165deg,
+    rgba(14, 10, 10, 0.72) 0%,
+    rgba(8, 6, 6, 0.78) 100%
+  );
+  border: 1px solid rgba(201, 166, 107, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.18),
+    0 14px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 248, 242, 0.06);
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
+}
+
+.bestall-hem-card--foodora,
+.bestall-hem-card--uber {
+  cursor: default;
+}
+
+.bestall-hem-card-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(7rem, 22vw, 9rem);
+  height: clamp(7rem, 22vw, 9rem);
+  margin-bottom: 0.65rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.bestall-hem-card-logo-wrap--uber {
+  background: #000;
+}
+
+.bestall-hem-card-logo-wrap--foodora {
+  background: #000;
+}
+
+.bestall-hem-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.bestall-hem-card-label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.2rem, 3vw, 1.45rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 248, 242, 0.96);
+  margin-bottom: 0.85rem;
+}
+
+.bestall-hem-card--foodora .bestall-hem-card-label,
+.bestall-hem-card--uber .bestall-hem-card-label {
+  margin-bottom: 0.75rem;
+}
+
+.bestall-hem-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+  max-width: 14rem;
+}
+
+.bestall-hem-btn {
+  display: block;
+  padding: 0.65rem 1rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  color: rgba(255, 248, 242, 0.95);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 245, 238, 0.22);
+  border-radius: 6px;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.bestall-hem-btn:hover {
+  background: rgba(215, 15, 100, 0.25);
+  border-color: rgba(215, 15, 100, 0.45);
+}
+
+.bestall-hem-btn--accent {
+  background: linear-gradient(145deg, rgba(215, 15, 100, 0.35) 0%, rgba(160, 10, 70, 0.4) 100%);
+  border-color: rgba(215, 15, 100, 0.5);
+}
+
+.bestall-hem-btn--accent:hover {
+  background: linear-gradient(145deg, rgba(215, 15, 100, 0.5) 0%, rgba(160, 10, 70, 0.55) 100%);
+  border-color: rgba(255, 200, 220, 0.35);
+}
+
+.bestall-hem-btn:focus-visible {
+  outline: 2px solid rgba(201, 166, 107, 0.9);
+  outline-offset: 2px;
+}
+
+/* Uber Eats: varumärkesgrönt + vit text */
+.bestall-hem-btn--uber {
+  color: #fff;
+  background: #355c37;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 2px 12px rgba(53, 92, 55, 0.4);
+}
+
+.bestall-hem-btn--uber:hover {
+  color: #fff;
+  background: #2a4a2c;
+  border-color: rgba(255, 255, 255, 0.65);
+  filter: none;
+}
+
+.bestall-hem-btn--uber:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (min-width: 720px) {
+  .bestall-hem {
+    max-width: min(48rem, 100%);
+  }
+}
+
+/* Ring & beställ (avhämtning / catering) */
+.bestall-hem-phone {
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.bestall-hem-phone-inner {
+  padding: clamp(1.35rem, 3.5vw, 1.75rem) clamp(1.15rem, 3vw, 1.5rem);
+  border-radius: 12px;
+  text-align: center;
+  background: linear-gradient(
+    155deg,
+    rgba(18, 14, 12, 0.78) 0%,
+    rgba(10, 8, 7, 0.82) 100%
+  );
+  border: 1px solid rgba(201, 166, 107, 0.32);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.2),
+    0 16px 44px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 248, 242, 0.07);
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
+}
+
+.bestall-hem-phone-title {
+  margin: 0 0 1rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.45rem, 3.8vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 248, 242, 0.98);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+}
+
+.bestall-hem-phone-list {
+  list-style: disc;
+  list-style-position: outside;
+  margin: 0 auto 1.25rem;
+  padding: 0 0 0 1.35rem;
+  max-width: 22rem;
+  text-align: left;
+}
+
+.bestall-hem-phone-list li {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255, 245, 238, 0.88);
+  padding: 0.25rem 0;
+  margin: 0;
+  background: none;
+  border: none;
+}
+
+.bestall-hem-phone-list li + li {
+  margin-top: 0.15rem;
+}
+
+.bestall-hem-phone-list li::marker {
+  color: rgba(201, 166, 107, 0.95);
+}
+
+.bestall-hem-phone-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+  max-width: 20rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 520px) {
+  .bestall-hem-phone-actions {
+    flex-direction: row;
+    align-items: stretch;
+    max-width: none;
+    justify-content: center;
+  }
+
+  .bestall-hem-phone-actions > .bestall-hem-phone-cta {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 14.5rem;
+  }
+}
+
+.bestall-hem-phone-cta {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.9rem 1.75rem;
+  min-width: min(100%, 16rem);
+  text-decoration: none;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #e8d4b8 0%, #c9a66b 45%, #a67c32 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.bestall-hem-phone-cta:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.bestall-hem-phone-cta--contact {
+  background: rgba(12, 8, 6, 0.65);
+  border: 1px solid rgba(201, 166, 107, 0.55);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 248, 242, 0.06);
+  filter: none;
+}
+
+.bestall-hem-phone-cta--contact:hover {
+  filter: none;
+  background: rgba(18, 12, 10, 0.78);
+  border-color: rgba(201, 166, 107, 0.8);
+  box-shadow:
+    0 8px 28px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 248, 242, 0.08);
+}
+
+.bestall-hem-phone-cta:focus-visible {
+  outline: 2px solid #f5e6d8;
+  outline-offset: 3px;
+}
+
+.bestall-hem-phone-cta-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(26, 10, 10, 0.75);
+}
+
+.bestall-hem-phone-cta-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(1.15rem, 3vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #1a0a0a;
+}
+
+.bestall-hem-phone-cta-label--on-dark {
+  color: rgba(201, 166, 107, 0.95);
+}
+
+.bestall-hem-phone-cta-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255, 248, 242, 0.92);
+}
