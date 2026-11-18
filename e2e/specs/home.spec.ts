@@ -71,3 +71,55 @@ test('booking step 3: the table picker is visible, not covered and clickable @ux
   // After the half-second pick effect the page glides on and focus lands on the next step.
   await expect(main.getByRole('button', { name: 'Bekräfta bord' })).toBeFocused({ timeout: 4000 })
 })
+
+/**
+ * After a table is picked (its button below the plan, or the table on the
+ * plan), the page waits for the half-second pick effect and then glides to
+ * Bekräfta bord: scrollY sampled every frame never moves in the first
+ * 400 ms and never more than 60 px in one frame. The click is a real mouse
+ * click on a target already in view, so the test tool does not scroll first.
+ */
+for (const target of ['chip', 'plan'] as const) {
+  test(`picking a table (${target}) glides to Bekräfta bord, no jump @ux`, async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' })
+    const main = page.locator('main')
+    const days = main.getByRole('group', { name: /datum/i }).getByRole('button')
+    test.skip((await days.count()) === 0, 'no booking on the home page')
+    await days.nth(2).click()
+    const times = main.getByRole('group', { name: 'Välj tid' }).getByRole('button')
+    await expect(times.first()).toBeVisible()
+    await times.last().click()
+    const chips = main.getByRole('group', { name: 'Lediga bord' }).getByRole('button')
+    await expect(chips.first()).toBeAttached()
+    const plan = main.locator('.floor-wrap')
+    test.skip(target === 'plan' && (await plan.count()) === 0, 'no floor plan')
+    // Put the target in the middle of the screen, then let the page settle.
+    const selector = target === 'chip' ? '.booking-table-list .filter-pill' : '.f3d-table.is-free, .floor-svg-pick'
+    await page.locator(selector).first().evaluate((el) => el.scrollIntoView({ block: 'center' }))
+    await page.waitForTimeout(400)
+    const box = await page.locator(selector).first().boundingBox()
+    expect(box, 'target in view').not.toBeNull()
+
+    await page.evaluate(() => {
+      const w = window as unknown as { __samples: [number, number][] }
+      w.__samples = []
+      const t0 = performance.now()
+      const frame = () => {
+        w.__samples.push([performance.now() - t0, window.scrollY])
+        if (performance.now() - t0 < 2000) requestAnimationFrame(frame)
+      }
+      requestAnimationFrame(frame)
+    })
+    await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2)
+    await page.waitForTimeout(2100)
+    const samples = await page.evaluate(() => (window as unknown as { __samples: [number, number][] }).__samples)
+
+    const start = samples[0][1]
+    const early = samples.filter(([ms]) => ms < 400).map(([, y]) => Math.abs(y - start))
+    expect(Math.max(...early), 'page moved during the pick effect (first 400 ms)').toBeLessThanOrEqual(1)
+    let maxStep = 0
+    for (let i = 1; i < samples.length; i++) maxStep = Math.max(maxStep, Math.abs(samples[i][1] - samples[i - 1][1]))
+    expect(maxStep, 'largest scroll in one frame (px)').toBeLessThanOrEqual(60)
+    await expect(main.getByRole('button', { name: 'Bekräfta bord' })).toBeFocused()
+  })
+}
