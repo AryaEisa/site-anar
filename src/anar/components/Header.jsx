@@ -74,7 +74,7 @@ export default function Header() {
           </ul>
         </nav>
 
-        <Link className="site-header-brand" to="/" aria-label={t('a11y.home')}>
+        <Link className="site-header-brand" to="/" aria-label={t('a11y.home')} onClick={closeMenu}>
           <img src={logoImg} alt="" width={88} height={88} />
         </Link>
 
@@ -120,6 +120,7 @@ export default function Header() {
         id="mobile-drawer"
         className={`mobile-drawer${menuOpen ? ' mobile-drawer--open' : ''}`}
         aria-hidden={!menuOpen}
+        inert={!menuOpen}
       >
         <nav aria-label={t('a11y.mobileNav')}>
           <ul className="mobile-drawer-list">

@@ -6,13 +6,13 @@ import ReviewsPanel from '../components/ReviewsPanel';
 
 const BookingFlow = lazy(sitePages.booking);
 
-/** Startsidan: bokning (kitets flöde) bredvid betyg och omdömen, sedan kartan. */
+/** Startsidan: bokning (kitets flöde) bredvid betyg och omdömen, sedan kartan. Sidans <main>, som på alla andra sidor. */
 export default function HomePage() {
   const { config } = useSite();
   const canBook = Boolean(config.tenant.features.reservations);
 
   return (
-    <div className="booking-reviews-stack">
+    <main className="booking-reviews-stack">
       <section className="desk-split">
         <div className="desk-split-col desk-split-col--form">
           {canBook && (
@@ -31,6 +31,6 @@ export default function HomePage() {
         </div>
       </section>
       <RestaurantMapSection />
-    </div>
+    </main>
   );
 }
