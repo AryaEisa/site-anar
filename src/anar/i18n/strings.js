@@ -76,7 +76,7 @@ export const STRINGS = {
   'orderBar.pickup': 'Beställ avhämtning',
 
   'footer.rights': 'Alla rättigheter förbehållna.',
-  'footer.credit': 'Denna hemsida är fullt utvecklad av It Hjälparna Nordic AB',
+  'footer.credit': 'Denna hemsida är fullt utvecklad av',
 
   'map.title': 'Hitta hit',
   'map.name': 'ANAR Restaurang & Bar',
