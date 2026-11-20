@@ -22,14 +22,23 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="site-footer-org-name">{legalName}</span>
-          {config.legal.orgNumber && <span className="site-footer-org-number">{config.legal.orgNumber}</span>}
+          <span className="site-footer-org-name" translate="no">
+            {legalName}
+          </span>
+          {config.legal.orgNumber && (
+            <span className="site-footer-org-number" translate="no">
+              {config.legal.orgNumber}
+            </span>
+          )}
         </a>
         <p className="site-footer-rights">
-          © {year} {legalName}. {t('footer.rights')}
+          © {year} <span translate="no">{legalName}</span>.{' '}
+          <span>{t('footer.rights')}</span>
         </p>
         <div className="site-footer-credit-block">
-          <p className="site-footer-credit">{t('footer.credit')}</p>
+          <p className="site-footer-credit">
+            {t('footer.credit')}
+          </p>
           <p className="site-footer-dev-site">
             <a
               className="site-footer-dev-link"
@@ -49,7 +58,10 @@ export default function Footer() {
           {config.tenant.features.reservations && <Link to="/bokningsvillkor">Bokningsvillkor</Link>}
         </nav>
         <p className="site-footer-credit">
-          Drivs av <BooqyWordmark className="site-footer-booqy" />
+          Drivs av{' '}
+          <span translate="no">
+            <BooqyWordmark className="site-footer-booqy" />
+          </span>
         </p>
       </div>
     </footer>

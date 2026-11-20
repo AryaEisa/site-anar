@@ -96,8 +96,8 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   height: 3px;
   border-radius: 10px 10px 0 0;
   background: linear-gradient(

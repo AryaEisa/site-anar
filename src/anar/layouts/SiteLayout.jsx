@@ -11,6 +11,7 @@ import bgBestall from '../images/delivery/delivery_background.jpg';
 import DrinkMenyBackground from '../components/DrinkMenyBackground';
 import DagensLunchBackground from '../components/DagensLunchBackground';
 import Header from '../components/Header';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 import OrderBar from '../components/OrderBar';
 import Footer from '../components/Footer';
 import MobilePreFooterNav from '../components/MobilePreFooterNav';
@@ -84,6 +85,7 @@ export default function SiteLayout() {
 
       <div className="landing-content">
         <Header />
+        <LanguageSwitcher />
         <OrderBar />
         <Suspense fallback={<SkelCard label="Hämtar sidan" />}>
           <Outlet />

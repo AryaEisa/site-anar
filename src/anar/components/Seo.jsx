@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useKitLanguage } from '../../shared/lang';
 import { DEFAULT_OG_IMAGE, SITE_ORIGIN } from '../config/site';
 
 function ensureMeta(property, content) {
@@ -38,12 +39,15 @@ const ROUTES = [
   { path: '/catering', titleKey: 'pageTitle.catering', descKey: 'meta.desc.catering' },
 ];
 
+const OG_LOCALES = { sv: 'sv_SE', en: 'en_GB', es: 'es_ES', ar: 'ar_AR', fa: 'fa_IR' };
+
 /**
  * Uppdaterar titel, beskrivning, canonical och Open Graph/Twitter per rutt.
  */
 export default function Seo() {
   const { pathname } = useLocation();
   const { t } = useLanguage();
+  const kitLang = useKitLanguage()?.lang;
 
   useEffect(() => {
     const route = ROUTES.find((r) => r.path === pathname) ?? ROUTES[0];
@@ -60,13 +64,13 @@ export default function Seo() {
     ensureMeta('og:description', description);
     ensureMeta('og:url', url);
     ensureMeta('og:image', DEFAULT_OG_IMAGE);
-    ensureMeta('og:locale', 'sv_SE');
+    ensureMeta('og:locale', OG_LOCALES[kitLang] ?? 'sv_SE');
 
     ensureMetaName('twitter:card', 'summary_large_image');
     ensureMetaName('twitter:title', title);
     ensureMetaName('twitter:description', description);
     ensureMetaName('twitter:image', DEFAULT_OG_IMAGE);
-  }, [pathname, t]);
+  }, [pathname, t, kitLang]);
 
   return null;
 }

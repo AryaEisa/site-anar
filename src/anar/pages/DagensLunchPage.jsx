@@ -70,11 +70,19 @@ export default function DagensLunchPage() {
             <div className="dagens-panel-head">
               <h2 className="dagens-panel-title" id={headingId}>
                 {title}
-                {grill && <span className="dagens-panel-sub">{t('dagens.grillSub')}</span>}
+                {grill && (
+                  <span className="dagens-panel-sub">
+                    {t('dagens.grillSub')}
+                  </span>
+                )}
               </h2>
               {shared !== null && <span className="dagens-price-tag">{shared} kr</span>}
             </div>
-            {shared !== null && <p className="dagens-panel-note">{t('menu.sharedPrice')}</p>}
+            {shared !== null && (
+              <p className="dagens-panel-note">
+                {t('menu.sharedPrice')}
+              </p>
+            )}
             <div className="dagens-dishes">
               {sec.items.map((d) => {
                 const prices = priceList(d);
@@ -83,7 +91,7 @@ export default function DagensLunchPage() {
                   <article key={d.menuItemId} className="dagens-dish">
                     <DishPhoto item={d} />
                     <h3 className="dagens-dish-title">
-                      {d.name}
+                      <span translate="no">{d.name}</span>
                       {own && priceText(d) && ` - ${priceText(d)}`}
                     </h3>
                     {d.description && <p className="dagens-dish-text">{d.description}</p>}

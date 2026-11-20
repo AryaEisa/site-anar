@@ -1,6 +1,9 @@
 .site-header {
   position: relative;
   z-index: 30;
+  /* Layouten är vänster till höger även när sidan är arabiska eller persiska (html dir=rtl): hamburgaren ligger fysiskt till höger, som panelen. */
+  direction: ltr;
+  unicode-bidi: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
