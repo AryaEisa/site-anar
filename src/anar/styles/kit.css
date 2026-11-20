@@ -53,10 +53,6 @@
   color-scheme: dark;
 }
 
-html[lang='fa'] {
-  --font: 'Vazirmatn', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-}
-
 /* Ram runt flödena på sidor som inte är Anars egna (boka, beställ, juridik) */
 .kit-page {
   flex: 1;

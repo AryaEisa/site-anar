@@ -37,8 +37,7 @@
     justify-content: center;
   }
 
-  /* Språkväljaren och kitets knappar och kategorichips. */
-  .language-switcher .language-switcher-select,
+  /* Kitets knappar och kategorichips. */
   .chip-rail .chip,
   .bq-btn--sm,
   .btn-small {

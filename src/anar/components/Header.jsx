@@ -8,9 +8,9 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const BASE_LEFT_NAV = [
   { key: 'nav.meny', to: '/meny' },
-  { key: 'nav.kolgrill', to: '/kolgrill' },
   { key: 'nav.drinkmeny', to: '/drinkmeny' },
   { key: 'nav.dagensLunch', to: '/dagens-lunch' },
+  { key: 'nav.catering', to: '/catering' },
 ];
 
 const RIGHT_NAV = [

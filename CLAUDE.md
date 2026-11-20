@@ -2,14 +2,20 @@
 
 This file is read automatically by Claude Code. Keep it current: when you finish a task, update "State of this repo" (date, what changed, what is left) in the same commit.
 
-## State of this repo (updated 2026-11-19)
+## State of this repo (updated 2026-11-20)
 
 - Anar's site. Dev preview: https://anar.dev.booqy.se. Production from `main`.
 - Uses site-kit 0.3.0 (`package.json`).
+- Swedish only. The English and Persian texts, the language switch and the Persian font are gone. `src/anar/i18n/strings.js` holds the Swedish copy; `t()` and `useLanguage()` stay in `src/anar/i18n/LanguageContext.jsx` so that Booqy's translations (AWS Translate, via Booqy) can be added there later.
+- Menus (Meny, Drinkmeny, Dagens lunch, and Kolgrill by URL only) are read from Booqy. Dish photos come from Booqy too (`src/anar/components/DishPhoto.jsx`, image CDN `menuImageBaseUrl` in `booqy.json`).
+- The header has a Catering button that is always shown. `/catering` shows the kit's catering flow when the location has catering switched on in Booqy (`location.catering`), otherwise "Under utveckling" (`src/anar/pages/CateringPage.jsx`). Dev has catering on; prod has no catering settings yet. When prod is ready, set `CATERING_PLACEHOLDER_UNTIL_ENABLED` to `false` in `src/App.tsx`.
+- Beställ hem has no "Ring och beställ" section, and `/kolgrill` is no longer linked from the menus.
+- The floor plan in the booking starts in 2D (`src/anar/kitBridge/floorView.ts`, temporary like the rest of `kitBridge/`, same removal rule).
 - Checkbox override: `src/anar/styles/checkboxes.css` (imported from `src/anar/styles/index.css`), commit `f5a9d47`.
 - Temporary bridge: `src/anar/kitBridge/` gives the table picker its new look on site-kit 0.3.0 (see its README). Remove it when the site bumps to a site-kit release that has the new table picker (0.4.0 or later), in the same PR as the bump.
 - `main` and `dev` have no common history. Do not merge or rebase one onto the other without the Booqy owner.
-- Last work by the Booqy owner's Claude session: checkbox visibility (2026-11-19). Nothing else in progress; the repo is free to take over.
+- Open: the catering terms (`terms`) are empty in dev; prod has no catering settings or catering menu yet; the catering menu has no categories.
+- Last work (2026-11-20): Anar's design ported from the old site, site-kit 0.3.0 pulled in, language removed, catering and dish photos wired up.
 
 ## Rules for every BooqyCustomers repo
 

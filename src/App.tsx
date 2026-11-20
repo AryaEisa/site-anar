@@ -13,6 +13,7 @@ import HistoriaPage from './anar/pages/HistoriaPage'
 import ParkeringPage from './anar/pages/ParkeringPage'
 import KontaktPage from './anar/pages/KontaktPage'
 import BestallHemPage from './anar/pages/BestallHemPage'
+import CateringPage from './anar/pages/CateringPage'
 
 // Flödena hämtas först när gästen öppnar dem (Anars egna sidor och startsidan
 // är med från början); SiteLayout visar ett skelett under tiden.
@@ -35,6 +36,16 @@ const Tickets = lazy(sitePages.biljett)
 const TicketReceive = lazy(sitePages.biljettTaEmot)
 
 /**
+ * /catering visar kitets cateringflöde (kalkyl, offert, BankID-signering,
+ * betalning) när platsen har slagit på catering i Booqy (location.catering).
+ * Tills dess visas "Under utveckling" (CateringPage, med headern kvar): dev är
+ * klart, prod är under uppbyggnad. När prod är klar: sätt denna till false, så
+ * visar kitet alltid sitt flöde och själv "tar inte emot cateringförfrågningar
+ * just nu" när restaurangen stänger av catering.
+ */
+const CATERING_PLACEHOLDER_UNTIL_ENABLED = true
+
+/**
  * Anars publika webbplats. Utseendet och sidorna (src/anar) är Anars egna;
  * flödena (boka, beställ, catering, presentkort, kö, evenemang, juridik)
  * kommer från @bookingsystemadvancedorg/site-kit och visas i KitPage. Varje
@@ -49,6 +60,7 @@ function App() {
   const reservations = config.tenant.features.reservations
   const ordering = config.tenant.features.ordering
   const catering = config.tenant.features.catering
+  const cateringLive = catering && (Boolean(location.catering) || !CATERING_PLACEHOLDER_UNTIL_ENABLED)
   const giftCards = config.tenant.features.giftCards
   const queue = config.tenant.features.waitlist && location.waitlist?.publicJoin
   const events = config.tenant.features.events
@@ -64,13 +76,14 @@ function App() {
         <Route path="parkering" element={<ParkeringPage />} />
         <Route path="kontakt" element={<KontaktPage />} />
         <Route path="bestall-hem" element={<BestallHemPage />} />
+        {!cateringLive && <Route path="catering" element={<CateringPage />} />}
         <Route element={<KitPage />}>
           {reservations && <Route path="boka-bord" element={<BookingFlow />} />}
           {reservations && <Route path="bokningsvillkor" element={<BookingTermsPage />} />}
           <Route path="bokning/:locationId/:reservationId" element={<ManageBooking />} />
           <Route path="bestall" element={<Bestall order={ordering ? <OrderFlow /> : null} kassan={<Kassan />} />} />
           <Route path="bestallning/:locationId/:orderId" element={<OrderStatus />} />
-          {catering && <Route path="catering" element={<CateringFlow />} />}
+          {cateringLive && <Route path="catering" element={<CateringFlow />} />}
           <Route path="catering/:locationId/:requestId" element={<CateringRequest />} />
           {giftCards && <Route path="presentkort" element={<GiftCards />} />}
           {giftCards && <Route path="presentkort/saldo" element={<GiftCardBalance />} />}

@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SkelCard } from '@bookingsystemadvancedorg/site-kit';
 import { useLanguage } from '../i18n/LanguageContext';
-import { categoryIntro, descriptionParts, priceText, useBooqyMenu, varietyList } from '../data/booqyMenu';
+import { categoryIntro, descriptionParts, priceText, sectionsForPage, useBooqyMenu, varietyList } from '../data/booqyMenu';
+import DishPhoto from './DishPhoto';
 
 function MenyDish({ item }) {
   const price = priceText(item);
@@ -11,6 +12,7 @@ function MenyDish({ item }) {
   if (varieties.length) {
     return (
       <div className="meny-sublist">
+        <DishPhoto item={item} />
         <h3 className="meny-sublist-title">
           {item.name}
           {price && ` ${price}`}
@@ -25,6 +27,7 @@ function MenyDish({ item }) {
   }
   return (
     <article className="meny-dish">
+      <DishPhoto item={item} />
       <h3 className="meny-dish-title">
         {item.name}
         {price && ` - ${price}`}
@@ -71,7 +74,7 @@ export default function MenyCategoryPage({
   const { pathname } = useLocation();
   const { t } = useLanguage();
   const { loading, error, retry, sections: all } = useBooqyMenu();
-  const sections = useMemo(() => all.filter((s) => s.page === page), [all, page]);
+  const sections = useMemo(() => sectionsForPage(all, page), [all, page]);
   const [activeId, setActiveId] = useState('');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const scrollPanelAfterCategoryPickRef = useRef(false);

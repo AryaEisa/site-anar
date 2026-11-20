@@ -33,11 +33,11 @@ export default function Footer() {
           <p className="site-footer-dev-site">
             <a
               className="site-footer-dev-link"
-              href="https://www.aryaeisa.com"
+              href="https://www.ithjalparna.se"
               target="_blank"
               rel="noopener noreferrer"
             >
-              www.aryaeisa.com
+              www.ithjalparna.se
             </a>
           </p>
         </div>

@@ -5,9 +5,9 @@ import { SiteProvider, configureSiteKit } from '@bookingsystemadvancedorg/site-k
 import archivoUrl from './assets/fonts/archivo.woff2?url'
 import martianUrl from './assets/fonts/martian-mono.woff2?url'
 import App from './App'
-import { LanguageProvider } from './anar/i18n/LanguageContext'
 import { Canonical } from './shared/Canonical'
 import { installTablePickerBridge } from './anar/kitBridge/tablePicker'
+import { installDefault2dView } from './anar/kitBridge/floorView'
 import '@fontsource/outfit/300.css'
 import '@fontsource/outfit/400.css'
 import '@fontsource/outfit/500.css'
@@ -15,10 +15,6 @@ import '@fontsource/outfit/600.css'
 import '@fontsource/cormorant-garamond/500.css'
 import '@fontsource/cormorant-garamond/600.css'
 import '@fontsource/cormorant-garamond/500-italic.css'
-import '@fontsource/vazirmatn/300.css'
-import '@fontsource/vazirmatn/400.css'
-import '@fontsource/vazirmatn/500.css'
-import '@fontsource/vazirmatn/600.css'
 import '@bookingsystemadvancedorg/site-kit/styles.css'
 import './anar/styles/index.css'
 
@@ -26,6 +22,8 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined
 
 // Bordsvalets klickeffekt och mjuka rullning tills site-kit har dem (src/anar/kitBridge/README.md).
 installTablePickerBridge()
+// Planritningen börjar i 2D, 3D är ett val (kitet startar i 3D).
+installDefault2dView()
 
 configureSiteKit({
   apiBaseUrl,
@@ -49,11 +47,9 @@ void ready
       <StrictMode>
         <BrowserRouter>
           <Canonical origin={import.meta.env.VITE_CANONICAL_ORIGIN as string | undefined} />
-          <LanguageProvider>
-            <SiteProvider>
-              <App />
-            </SiteProvider>
-          </LanguageProvider>
+          <SiteProvider>
+            <App />
+          </SiteProvider>
         </BrowserRouter>
       </StrictMode>,
     ),
