@@ -8,21 +8,14 @@ export const site = {
    * cards, events, legal) are added from the plan in site-config. A test
    * fails when the site links to a page missing from this list.
    */
-  pages: ['/', '/meny', '/kolgrill', '/drinkmeny', '/dagens-lunch', '/historia', '/parkering', '/kontakt', '/bestall-hem'],
+  pages: ['/', '/meny', '/kolgrill', '/drinkmeny', '/dagens-lunch', '/historia', '/parkering', '/kontakt', '/bestall-hem', '/catering'],
   /** The page with the contact form or details, and the parking page (null when the site has none). */
   contactPath: '/kontakt' as string | null,
   parkingPath: '/parkering' as string | null,
   /** Light and dark mode with a toggle (booqy-theme). Anar has one look (dark). */
   themes: [] as ('light' | 'dark')[],
-  /** The language switch, when the site has one. */
-  language: {
-    /** The branded dropdown's trigger. */
-    trigger: '#site-language',
-    /** Option to pick, and text that then shows in the header. */
-    option: 'English',
-    expectText: /Contact/,
-    expectLang: 'en-GB',
-  } as { trigger: string; option: string; expectText: RegExp; expectLang: string } | null,
+  /** The language switch, when the site has one (none until Booqy's translations are in). */
+  language: null as { trigger: string; option: string; expectText: RegExp; expectLang: string } | null,
   /** Parts of pages that change from run to run (masked in screenshots). */
   visualMasks: ['.guest-reviews'],
   /**

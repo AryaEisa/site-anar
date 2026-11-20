@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import DishPhoto from '../components/DishPhoto';
 import { MenuState } from '../components/MenyCategoryPage';
 import { descriptionParts, priceText, useBooqyMenu } from '../data/booqyMenu';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -33,6 +34,7 @@ export default function KolgrillPage() {
               const { text, note } = descriptionParts(d);
               return (
                 <article key={d.menuItemId} className="kolgrill-dish">
+                  <DishPhoto item={d} />
                   <h2 className="kolgrill-dish-title">
                     {d.name}
                     {price && ` - ${price}`}

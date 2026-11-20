@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import DishPhoto from '../components/DishPhoto';
 import { MenuState } from '../components/MenyCategoryPage';
 import { lunchTitle, priceList, priceText, useBooqyMenu } from '../data/booqyMenu';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -80,6 +81,7 @@ export default function DagensLunchPage() {
                 const own = !(prices.length === 1 && prices[0] === shared);
                 return (
                   <article key={d.menuItemId} className="dagens-dish">
+                    <DishPhoto item={d} />
                     <h3 className="dagens-dish-title">
                       {d.name}
                       {own && priceText(d) && ` - ${priceText(d)}`}

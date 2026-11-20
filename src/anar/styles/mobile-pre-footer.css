@@ -15,8 +15,6 @@
     padding: 0.85rem clamp(1rem, 3vw, 1.25rem) 0.35rem;
     box-sizing: border-box;
     border-top: 1px solid rgba(255, 245, 238, 0.1);
-    direction: ltr;
-    unicode-bidi: isolate;
   }
 
   .mobile-pre-footer-col:not(.mobile-pre-footer-col--hours) {

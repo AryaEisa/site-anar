@@ -124,7 +124,8 @@
   overflow-x: visible;
 }
 
-.landing--kolgrill .landing-scrim {
+.landing--kolgrill .landing-scrim,
+.landing--catering .landing-scrim {
   background: linear-gradient(
       180deg,
       rgba(8, 5, 4, 0.8) 0%,

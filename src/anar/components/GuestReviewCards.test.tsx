@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { act, render } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { LanguageProvider } from '../i18n/LanguageContext'
 import GuestReviewCards from './GuestReviewCards'
 
 /**
@@ -36,11 +35,7 @@ describe('GuestReviewCards', () => {
       return { cancel: vi.fn(), onfinish: null } as unknown as Animation
     })
     Object.defineProperty(Element.prototype, 'animate', { value: animate, configurable: true, writable: true })
-    const { container } = render(
-      <LanguageProvider>
-        <GuestReviewCards />
-      </LanguageProvider>,
-    )
+    const { container } = render(<GuestReviewCards />)
     act(() => {
       vi.advanceTimersByTime(3600)
     })

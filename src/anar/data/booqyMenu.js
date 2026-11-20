@@ -26,6 +26,12 @@ export function pageOfCategory(name = '') {
   return 'meny';
 }
 
+/** Sidorna delar kategorier. Drinkmeny visar sina egna drinkkategorier och dessutom Drycker (samma data som på Meny). */
+export function sectionsForPage(sections, page) {
+  if (page === 'drink') return sections.filter((s) => s.page === 'drink' || /dryck/i.test(s.name));
+  return sections.filter((s) => s.page === page);
+}
+
 /** Rubriken utan "Dagens lunch:" framför (på lunchsidan står det redan överst). */
 export function lunchTitle(name = '') {
   return name.replace(/^\s*dagens\s+lunch\s*[:-]?\s*/i, '').trim() || name;

@@ -5,13 +5,12 @@
 /* Kortleken (GuestReviewCards.jsx) är smalare än kolumnen: det främre kortet
    svingar runt högra hörnet (42 % av sin bredd åt höger, 58 px upp, 16 grader)
    och ska synas hela vägen. Bredden lämnar plats för svingen, och kort plus
-   sving står centrerade i kolumnen. Alltid vänster till höger, även på farsi. */
+   sving står centrerade i kolumnen. */
 .guest-reviews {
   --deck-swing-room: 2.25rem;
   --deck-w: min(25rem, calc((100% - var(--deck-swing-room)) / 1.45));
   width: 100%;
   box-sizing: border-box;
-  direction: ltr;
 }
 
 .reviews-column .guest-reviews {

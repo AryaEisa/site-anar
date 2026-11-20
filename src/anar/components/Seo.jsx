@@ -35,20 +35,15 @@ const ROUTES = [
   { path: '/parkering', titleKey: 'pageTitle.parkering', descKey: 'meta.desc.parkering' },
   { path: '/kontakt', titleKey: 'pageTitle.kontakt', descKey: 'meta.desc.kontakt' },
   { path: '/bestall-hem', titleKey: 'pageTitle.bestall', descKey: 'meta.desc.bestall' },
+  { path: '/catering', titleKey: 'pageTitle.catering', descKey: 'meta.desc.catering' },
 ];
-
-function localeToOg(locale) {
-  if (locale === 'en') return 'en_GB';
-  if (locale === 'fa') return 'fa_IR';
-  return 'sv_SE';
-}
 
 /**
  * Uppdaterar titel, beskrivning, canonical och Open Graph/Twitter per rutt.
  */
 export default function Seo() {
   const { pathname } = useLocation();
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const route = ROUTES.find((r) => r.path === pathname) ?? ROUTES[0];
@@ -65,13 +60,13 @@ export default function Seo() {
     ensureMeta('og:description', description);
     ensureMeta('og:url', url);
     ensureMeta('og:image', DEFAULT_OG_IMAGE);
-    ensureMeta('og:locale', localeToOg(locale));
+    ensureMeta('og:locale', 'sv_SE');
 
     ensureMetaName('twitter:card', 'summary_large_image');
     ensureMetaName('twitter:title', title);
     ensureMetaName('twitter:description', description);
     ensureMetaName('twitter:image', DEFAULT_OG_IMAGE);
-  }, [pathname, t, locale]);
+  }, [pathname, t]);
 
   return null;
 }

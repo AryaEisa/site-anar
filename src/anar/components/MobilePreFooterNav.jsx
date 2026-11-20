@@ -4,7 +4,6 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const COL1 = [
   { to: '/meny', key: 'nav.meny' },
-  { to: '/kolgrill', key: 'nav.kolgrill' },
   { to: '/drinkmeny', key: 'nav.drinkmeny' },
 ];
 

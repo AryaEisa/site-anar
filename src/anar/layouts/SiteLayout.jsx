@@ -11,7 +11,6 @@ import bgBestall from '../images/delivery/delivery_background.jpg';
 import DrinkMenyBackground from '../components/DrinkMenyBackground';
 import DagensLunchBackground from '../components/DagensLunchBackground';
 import Header from '../components/Header';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 import OrderBar from '../components/OrderBar';
 import Footer from '../components/Footer';
 import MobilePreFooterNav from '../components/MobilePreFooterNav';
@@ -33,6 +32,7 @@ export default function SiteLayout() {
   const isParkering = pathname === '/parkering';
   const isKontakt = pathname === '/kontakt';
   const isBestall = pathname === '/bestall-hem';
+  const isCatering = pathname === '/catering';
   const bgSrc = isBestall
     ? bgBestall
     : isKontakt
@@ -41,7 +41,7 @@ export default function SiteLayout() {
         ? bgParking
         : isHistoria
           ? bgHistoria
-          : isKolgrill
+          : isKolgrill || isCatering
             ? bgKolgrill
             : isMeny
               ? bgMeny
@@ -57,6 +57,7 @@ export default function SiteLayout() {
     isParkering && 'landing--parkering',
     isKontakt && 'landing--kontakt',
     isBestall && 'landing--bestall',
+    isCatering && 'landing--catering',
   ]
     .filter(Boolean)
     .join(' ');
@@ -83,7 +84,6 @@ export default function SiteLayout() {
 
       <div className="landing-content">
         <Header />
-        <LanguageSwitcher />
         <OrderBar />
         <Suspense fallback={<SkelCard label="Hämtar sidan" />}>
           <Outlet />

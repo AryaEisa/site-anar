@@ -1,9 +1,6 @@
 .site-header {
   position: relative;
   z-index: 30;
-  /* LTR-layout även när sidan är fa (html dir=rtl): hamburger ska ligga fysiskt till höger. */
-  direction: ltr;
-  unicode-bidi: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
@@ -88,7 +85,7 @@
   position: fixed;
   top: 0;
   bottom: 0;
-  /* Alltid fysiskt höger (samma som hamburger), även när html är RTL för farsi */
+  /* Fysiskt höger (samma som hamburger) */
   right: 0;
   left: auto;
   z-index: 20;
