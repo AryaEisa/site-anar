@@ -218,7 +218,7 @@ export default function CateringBuilder() {
       <section className="page-hero page-prose catering-load-error" data-bq-theme="restaurant">
         <h1>Catering</h1>
         <p role="alert">
-          Cateringformuläret kunde inte laddas. Försök igen, eller ring {info.name}
+          {`Cateringformuläret kunde inte laddas. Försök igen, eller ring ${info.name}`}
           {info.phone ? (
             <>
               {' '}
@@ -244,7 +244,7 @@ export default function CateringBuilder() {
   if (!settings.enabled) {
     return (
       <p className="notice" role="status">
-        {config.tenant.name} tar inte emot cateringförfrågningar just nu.
+        {`${config.tenant.name} tar inte emot cateringförfrågningar just nu.`}
       </p>
     )
   }

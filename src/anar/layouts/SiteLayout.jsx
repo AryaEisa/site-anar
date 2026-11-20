@@ -11,16 +11,20 @@ import bgBestall from '../images/delivery/delivery_background.jpg';
 import DrinkMenyBackground from '../components/DrinkMenyBackground';
 import DagensLunchBackground from '../components/DagensLunchBackground';
 import Header from '../components/Header';
-import LanguageSwitcher from '../components/LanguageSwitcher';
 import OrderBar from '../components/OrderBar';
 import Footer from '../components/Footer';
 import MobilePreFooterNav from '../components/MobilePreFooterNav';
 import Seo from '../components/Seo';
+import { useLanguage } from '../i18n/LanguageContext';
+import { useKeepTerms } from '../../shared/lang';
 
 export default function SiteLayout() {
   const { pathname } = useLocation();
   const { config, location } = useSite();
   const marketing = config.tenant.features.marketing;
+  const { t } = useLanguage();
+  // Anars namn översätts aldrig, inte heller i sidtitlar, kartan och beskrivningar.
+  useKeepTerms([t('meta.brand'), 'ANAR', 'Anar']);
   // Besöksstatistik utan cookies, bara med marknadsföring i planen.
   useEffect(() => {
     if (marketing) trackPage(location.locationId, pathname);
@@ -85,7 +89,6 @@ export default function SiteLayout() {
 
       <div className="landing-content">
         <Header />
-        <LanguageSwitcher />
         <OrderBar />
         <Suspense fallback={<SkelCard label="Hämtar sidan" />}>
           <Outlet />

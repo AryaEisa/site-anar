@@ -1,31 +1,23 @@
-/* LTR-ö: språklisten ska ligga kvar på fysiskt höger även när sidan är RTL (persiska). */
-.language-switcher-ltr {
-  direction: ltr;
-  width: 100%;
-  unicode-bidi: isolate;
-}
-
-/* Figma 1440: raden har 48 px till höger, 5.6 över och 8.8 under */
+/* Språkväljaren i toppbandet längst till höger (Header.jsx, .site-header-tools):
+   efter länkarna på dator, bredvid menyknappen på telefon och surfplatta.
+   Toppbandet är vänster till höger i alla språk (header.css). */
 .language-switcher {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  padding: 0.35rem clamp(1rem, 3.34vw, 3rem) 0.55rem;
-  box-sizing: border-box;
+  flex: none;
 }
 
-/* Kitets språkväljare (site-kit med språkstöd) som samma pill: svart glas, vit 2 px kant.
+/* Kitets språkväljare (site-kit med språkstöd) som pill: svart glas, vit 2 px kant.
    Knappen visar flagga och kod; listan öppnas i kitets rullista i Anars look. */
 .language-switcher .language-switcher-picker {
   --accent-ink: #f0d9a8;
 }
 
 .language-switcher .language-switcher-picker .lang-picker-button {
-  min-width: 5.5rem;
+  min-width: 2.75rem;
   min-height: 2.75rem;
   padding-block: 0;
-  padding-inline: 1rem 2.25rem;
+  padding-inline: 0.85rem 2rem;
   border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, 0.55);
   background: rgba(0, 0, 0, 0.55);
@@ -61,4 +53,30 @@
 .language-switcher .language-switcher-picker .combo-value {
   display: flex;
   align-items: center;
+}
+
+/* Telefon och surfplatta: en smalare pill bredvid menyknappen, så att loggan får luft. */
+@media (max-width: 1073px) {
+  .language-switcher .language-switcher-picker .lang-picker-button {
+    padding-inline: 0.7rem 1.7rem;
+  }
+
+  .language-switcher .language-switcher-picker .lang-picker-value {
+    gap: 6px;
+  }
+
+  .language-switcher .language-switcher-picker .combo-chevron {
+    inset-inline-end: 0.6rem;
+  }
+}
+
+/* Smala telefoner: bara flaggan och pilen. */
+@media (max-width: 380px) {
+  .language-switcher .language-switcher-picker .lang-picker-button {
+    padding-inline: 0.7rem 1.75rem;
+  }
+
+  .language-switcher .language-switcher-picker .lang-picker-code {
+    display: none;
+  }
 }

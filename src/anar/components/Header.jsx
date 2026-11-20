@@ -4,6 +4,7 @@ import { useSite } from '@bookingsystemadvancedorg/site-kit';
 import logoImg from '../images/logo.png';
 import OpeningHoursDropdown from './OpeningHoursDropdown';
 import OpeningHoursModal from './OpeningHoursModal';
+import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const BASE_LEFT_NAV = [
@@ -78,36 +79,42 @@ export default function Header() {
           <img src={logoImg} alt="" width={88} height={88} />
         </Link>
 
-        <nav className="site-header-nav site-header-nav--right" aria-label={t('a11y.navRight')}>
-          <ul>
-            {RIGHT_NAV.map((item) => (
-              <li key={item.to}>
-                <Link to={item.to}>{t(item.key)}</Link>
+        {/* Höger kolumn: länkarna, sedan språkväljaren längst till höger (och på telefon menyknappen). */}
+        <div className="site-header-end">
+          <nav className="site-header-nav site-header-nav--right" aria-label={t('a11y.navRight')}>
+            <ul>
+              {RIGHT_NAV.map((item) => (
+                <li key={item.to}>
+                  <Link to={item.to}>{t(item.key)}</Link>
+                </li>
+              ))}
+              <li>
+                <OpeningHoursDropdown
+                  ref={openingHoursDesktopRef}
+                  open={hoursModalOpen}
+                  onOpenChange={setHoursModalOpen}
+                />
               </li>
-            ))}
-            <li>
-              <OpeningHoursDropdown
-                ref={openingHoursDesktopRef}
-                open={hoursModalOpen}
-                onOpenChange={setHoursModalOpen}
-              />
-            </li>
-          </ul>
-        </nav>
+            </ul>
+          </nav>
 
-        <button
-          ref={menuBtnRef}
-          type="button"
-          className={`site-header-burger${menuOpen ? ' site-header-burger--open' : ''}`}
-          aria-label={menuOpen ? t('a11y.closeMenu') : t('a11y.openMenu')}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-drawer"
-          onClick={() => setMenuOpen((o) => !o)}
-        >
-          <span className="site-header-burger-line" aria-hidden="true" />
-          <span className="site-header-burger-line" aria-hidden="true" />
-          <span className="site-header-burger-line" aria-hidden="true" />
-        </button>
+          <div className="site-header-tools">
+            <LanguageSwitcher />
+            <button
+              ref={menuBtnRef}
+              type="button"
+              className={`site-header-burger${menuOpen ? ' site-header-burger--open' : ''}`}
+              aria-label={menuOpen ? t('a11y.closeMenu') : t('a11y.openMenu')}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-drawer"
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              <span className="site-header-burger-line" aria-hidden="true" />
+              <span className="site-header-burger-line" aria-hidden="true" />
+              <span className="site-header-burger-line" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
       </header>
 
       <div

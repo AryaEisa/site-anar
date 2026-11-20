@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { cateringApi } from '@bookingsystemadvancedorg/site-kit'
 import DishPhoto from '../components/DishPhoto'
+import { useKeepTerms } from '../../shared/lang'
 import { GROUPS, MAX_QUANTITY } from './selection'
 import type { Choice, DrinkMode, Unit } from './selection'
 
@@ -11,7 +12,8 @@ import type { Choice, DrinkMode, Unit } from './selection'
  * antal per dryck. "Övrigt" (det som inte går att räkna ut) har ett eget antal.
  */
 
-const priceText = (u: Unit) => `${cateringApi.kronor(Math.round(u.price * 100))}/${u.kind === 'package' ? 'gäst' : 'port'}`
+// "per portion" i klartext: "/port" blev obegripligt i översättningen.
+const priceText = (u: Unit) => `${cateringApi.kronor(Math.round(u.price * 100))} per ${u.kind === 'package' ? 'gäst' : 'portion'}`
 
 function Tags({ allergens, dietary }: { allergens?: string[]; dietary?: string[] }) {
   if (!allergens?.length && !dietary?.length) return null
@@ -61,6 +63,8 @@ export default function MenuPicker({
   onChange: (next: Choice) => void
 }) {
   const uid = useId()
+  // Rätternas namn översätts aldrig, inte heller i "Portioner Burrata".
+  useKeepTerms(units.flatMap((u) => [u.name, ...(u.includes ?? [])]))
   const toggle = (id: string) => {
     const picked = new Set(choice.picked)
     if (picked.has(id)) picked.delete(id)
@@ -93,14 +97,14 @@ export default function MenuPicker({
                     )}
                     <span className="cb-text">
                       <span className="cb-head">
-                        <strong id={`${base}-n`}>{u.name}</strong>
+                        <strong id={`${base}-n`} translate="no">{u.name}</strong>
                         <span className="dish-price" id={`${base}-p`}>
                           {priceText(u)}
                         </span>
                       </span>
                       {u.description && <span className="dish-desc">{u.description}</span>}
-                      {u.includes && u.includes.length > 0 && <span className="dish-desc">{u.includes.join(' · ')}</span>}
-                      {u.minGuests ? <span className="dish-desc">Från {u.minGuests} gäster</span> : null}
+                      {u.includes && u.includes.length > 0 && <span className="dish-desc" translate="no">{u.includes.join(' · ')}</span>}
+                      {u.minGuests ? <span className="dish-desc">{`Från ${u.minGuests} gäster`}</span> : null}
                       <Tags allergens={u.allergens} dietary={u.dietary} />
                     </span>
                   </>

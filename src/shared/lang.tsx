@@ -32,6 +32,7 @@ export type LanguagePickerComponent = ComponentType<{ className?: string }>
 const exported = kit as unknown as Record<string, unknown>
 const pickerExport = exported[['Language', 'Picker'].join('')]
 const hookExport = exported[['use', 'Language'].join('')]
+const keepExport = exported[['use', 'Keep', 'Terms'].join('')]
 
 export const LanguagePicker: LanguagePickerComponent | null =
   typeof pickerExport === 'function' ? (pickerExport as LanguagePickerComponent) : null
@@ -40,6 +41,14 @@ export const LanguagePicker: LanguagePickerComponent | null =
 export const hasKitLanguage = typeof hookExport === 'function' && LanguagePicker !== null
 
 const noKitLanguage = (): KitLanguage | null => null
+
+/**
+ * Namn som aldrig översätts (Anars namn, rätter i cateringformuläret) medan
+ * komponenten visas: kitets useKeepTerms, eller ingenting i site-kit utan
+ * språkstöd.
+ */
+export const useKeepTerms: (terms: readonly (string | null | undefined)[]) => void =
+  typeof keepExport === 'function' ? (keepExport as (terms: readonly (string | null | undefined)[]) => void) : () => {}
 
 /** Kitets språk (värdet från useLanguage), eller null i site-kit utan språkstöd. */
 export const useKitLanguage: () => KitLanguage | null = hasKitLanguage
