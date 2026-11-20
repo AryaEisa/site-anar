@@ -89,7 +89,7 @@ describe('App on SiteProvider', () => {
     expect(screen.getAllByRole('link', { name: 'Catering' }).length).toBeGreaterThan(0)
   })
 
-  it("opens Booqy's catering flow from the same button once the location has catering switched on", async () => {
+  it("opens Anar's catering form (tick what you want) from the same button once the location has catering switched on", async () => {
     window.history.replaceState(null, '', '/?restaurang=testkrogen')
     const cfg = siteConfig({ features: { catering: true } })
     cfg.locations[0] = { ...cfg.locations[0], catering: true }
@@ -102,6 +102,9 @@ describe('App on SiteProvider', () => {
       if (url.includes('/catering/settings')) return json(settings)
       if (url.includes('/catering/menu')) return json({ dishes: [{ dishId: 'd1', name: 'Grillad lax', pricePerPortion: 245 }], packages: [] })
       if (url.includes('/catering/discount-tiers')) return json({ tiers: [] })
+      if (url.endsWith('/menu')) {
+        return json({ items: [{ menuItemId: 'm1', name: 'Grillad lax', description: '', price: 245, category: 'mains', imageKey: null }], categories: [{ categoryId: 'mains', name: 'Varmrätter' }] })
+      }
       return json({ items: [] })
     }))
 
@@ -111,7 +114,9 @@ describe('App on SiteProvider', () => {
     await userEvent.click(screen.getAllByRole('link', { name: 'Catering' })[0])
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Räkna på catering' })).toBeInTheDocument()
-    expect(screen.getByLabelText('Portioner Grillad lax')).toBeInTheDocument()
+    // Att kryssa i, inte ett antal att skriva: mängden räknas ut åt gästen.
+    expect(await screen.findByRole('checkbox', { name: 'Grillad lax' })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Portioner Grillad lax')).not.toBeInTheDocument()
     expect(screen.queryByText('Under utveckling')).not.toBeInTheDocument()
     // Headern finns kvar även här.
     expect(screen.getAllByRole('link', { name: 'Meny' }).length).toBeGreaterThan(0)

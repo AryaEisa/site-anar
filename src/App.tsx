@@ -22,7 +22,8 @@ const ManageBooking = lazy(sitePages.manageBooking)
 const OrderFlow = lazy(sitePages.order)
 const Kassan = lazy(sitePages.kassan)
 const OrderStatus = lazy(sitePages.orderStatus)
-const CateringFlow = lazy(sitePages.catering)
+// Anars cateringformulär (kryssa i vad du vill ha); gästens sida efteråt är kitets.
+const CateringFlow = lazy(() => import('./anar/catering/CateringBuilder'))
 const CateringRequest = lazy(sitePages.cateringRequest)
 const PrivacyPolicy = lazy(sitePages.privacy)
 const CookiePolicy = lazy(sitePages.cookies)
@@ -36,12 +37,13 @@ const Tickets = lazy(sitePages.biljett)
 const TicketReceive = lazy(sitePages.biljettTaEmot)
 
 /**
- * /catering visar kitets cateringflöde (kalkyl, offert, BankID-signering,
- * betalning) när platsen har slagit på catering i Booqy (location.catering).
- * Tills dess visas "Under utveckling" (CateringPage, med headern kvar): dev är
- * klart, prod är under uppbyggnad. När prod är klar: sätt denna till false, så
- * visar kitet alltid sitt flöde och själv "tar inte emot cateringförfrågningar
- * just nu" när restaurangen stänger av catering.
+ * /catering visar Anars cateringformulär (src/anar/catering: kryssa i rätter och
+ * drycker, ungefärlig kalkyl) när platsen har slagit på catering i Booqy
+ * (location.catering). Offerten, BankID-signeringen och betalningen efteråt är
+ * kitets (CateringRequest). Tills dess visas "Under utveckling" (CateringPage,
+ * med headern kvar): dev är klart, prod är under uppbyggnad. När prod är klar:
+ * sätt denna till false, så visas alltid formuläret, som själv säger "tar inte
+ * emot cateringförfrågningar just nu" när restaurangen stänger av catering.
  */
 const CATERING_PLACEHOLDER_UNTIL_ENABLED = true
 
