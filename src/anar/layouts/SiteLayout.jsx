@@ -1,6 +1,6 @@
 import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { OfferCard, SkelCard, trackPage, useSite } from '@bookingsystemadvancedorg/site-kit';
+import { OfferCard, SkelCard, trackPage, useKeepTerms, useSite } from '@bookingsystemadvancedorg/site-kit';
 import bgKebab from '../images/kebab.gif';
 import bgMeny from '../images/granatapple.webp';
 import bgKolgrill from '../images/kollgrill.webp';
@@ -16,7 +16,6 @@ import Footer from '../components/Footer';
 import MobilePreFooterNav from '../components/MobilePreFooterNav';
 import Seo from '../components/Seo';
 import { useLanguage } from '../i18n/LanguageContext';
-import { useKeepTerms } from '../../shared/lang';
 
 export default function SiteLayout() {
   const { pathname } = useLocation();

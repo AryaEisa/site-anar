@@ -1,7 +1,6 @@
 import { useId } from 'react'
-import { cateringApi } from '@bookingsystemadvancedorg/site-kit'
+import { cateringApi, useKeepTerms } from '@bookingsystemadvancedorg/site-kit'
 import DishPhoto from '../components/DishPhoto'
-import { useKeepTerms } from '../../shared/lang'
 import { GROUPS, MAX_QUANTITY } from './selection'
 import type { Choice, DrinkMode, Unit } from './selection'
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
-import { useKitLanguage } from '../../shared/lang';
+import { useLanguage as useKitLanguage } from '@bookingsystemadvancedorg/site-kit';
 import { DEFAULT_OG_IMAGE, SITE_ORIGIN } from '../config/site';
 
 function ensureMeta(property, content) {
@@ -47,7 +47,7 @@ const OG_LOCALES = { sv: 'sv_SE', en: 'en_GB', es: 'es_ES', ar: 'ar_AR', fa: 'fa
 export default function Seo() {
   const { pathname } = useLocation();
   const { t } = useLanguage();
-  const kitLang = useKitLanguage()?.lang;
+  const kitLang = useKitLanguage().lang;
 
   useEffect(() => {
     const route = ROUTES.find((r) => r.path === pathname) ?? ROUTES[0];

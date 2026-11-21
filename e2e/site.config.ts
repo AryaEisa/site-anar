@@ -14,8 +14,15 @@ export const site = {
   parkingPath: '/parkering' as string | null,
   /** Light and dark mode with a toggle (booqy-theme). Anar has one look (dark). */
   themes: [] as ('light' | 'dark')[],
-  /** The language switch, when the site has one (none until Booqy's translations are in). */
-  language: null as { trigger: string; option: string; expectText: RegExp; expectLang: string } | null,
+  /** The language switch: site-kit's picker in the top bar (sv, en, es, ar, fa). */
+  language: {
+    /** The branded dropdown's trigger. */
+    trigger: '.language-switcher button',
+    /** Option to pick, and text that then shows in the header. */
+    option: 'English',
+    expectText: /Contact/,
+    expectLang: 'en',
+  } as { trigger: string; option: string; expectText: RegExp; expectLang: string } | null,
   /** Parts of pages that change from run to run (masked in screenshots). */
   visualMasks: ['.guest-reviews'],
   /**

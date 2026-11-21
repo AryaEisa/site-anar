@@ -6,7 +6,6 @@ import archivoUrl from './assets/fonts/archivo.woff2?url'
 import martianUrl from './assets/fonts/martian-mono.woff2?url'
 import App from './App'
 import { Canonical } from './shared/Canonical'
-import { installTablePickerBridge } from './anar/kitBridge/tablePicker'
 import { installDefault2dView } from './anar/kitBridge/floorView'
 import '@fontsource/outfit/300.css'
 import '@fontsource/outfit/400.css'
@@ -20,9 +19,7 @@ import './anar/styles/index.css'
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined
 
-// Bordsvalets klickeffekt och mjuka rullning tills site-kit har dem (src/anar/kitBridge/README.md).
-installTablePickerBridge()
-// Planritningen börjar i 2D, 3D är ett val (kitet startar i 3D).
+// Planritningen börjar i 2D, 3D är ett val (kitet startar i 3D, src/anar/kitBridge/README.md).
 installDefault2dView()
 
 configureSiteKit({

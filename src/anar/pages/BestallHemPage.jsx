@@ -29,7 +29,7 @@ export default function BestallHemPage() {
           <span className="bestall-hem-card-logo-wrap bestall-hem-card-logo-wrap--uber">
             <img src={uberEatsImg} alt="" className="bestall-hem-card-img" width={160} height={160} />
           </span>
-          <span className="bestall-hem-card-label">Uber Eats</span>
+          <span className="bestall-hem-card-label" translate="no">Uber Eats</span>
           <div className="bestall-hem-card-actions">
             <a
               className="bestall-hem-btn bestall-hem-btn--uber"
@@ -46,7 +46,7 @@ export default function BestallHemPage() {
           <span className="bestall-hem-card-logo-wrap bestall-hem-card-logo-wrap--foodora">
             <img src={foodoraImg} alt="" className="bestall-hem-card-img" width={160} height={160} />
           </span>
-          <span className="bestall-hem-card-label">foodora</span>
+          <span className="bestall-hem-card-label" translate="no">foodora</span>
           <div className="bestall-hem-card-actions">
             <a className="bestall-hem-btn" href={FOODORA_WEB} target="_blank" rel="noopener noreferrer">
               {t('bestall.viaWeb')}
