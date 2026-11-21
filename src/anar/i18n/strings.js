@@ -54,6 +54,7 @@ export const STRINGS = {
   'a11y.closeOpeningHours': 'Stäng öppettider',
   'a11y.openMenu': 'Öppna meny',
   'a11y.preFooterNav': 'Snabblänkar och öppettider',
+  'a11y.footerPages': 'Mer om Anar',
 
   'hours.title': 'Öppettider',
   'hours.closed': 'Stängt',
@@ -76,7 +77,7 @@ export const STRINGS = {
   'orderBar.pickup': 'Beställ avhämtning',
 
   'footer.rights': 'Alla rättigheter förbehållna.',
-  'footer.credit': 'Denna hemsida är fullt utvecklad av It Hjälparna Nordic AB',
+  'footer.credit': 'Designat av It Hjälparna Nordic AB',
 
   'map.title': 'Hitta hit',
   'map.name': 'ANAR Restaurang & Bar',

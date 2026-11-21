@@ -1,6 +1,16 @@
+/* Headerns höjd (--header-h) sätts av Header.jsx; 0 tills dess. Kitets klistrade delar
+   (kalkylbrickan, bokningens banner) lägger sig under den. */
+:root {
+  --header-h: 0px;
+}
+
+/* Klistrad högst upp: den gömmer sig när man scrollar nedåt och kommer tillbaka när man scrollar uppåt
+   (useHideOnScroll). */
 .site-header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 30;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, border-color 0.25s ease;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
@@ -10,6 +20,24 @@
   border-bottom: 1px solid rgba(255, 245, 238, 0.12);
   backdrop-filter: blur(10px);
   background: rgba(6, 3, 3, 0.35);
+}
+
+.site-header--hidden {
+  transform: translateY(-100%);
+}
+
+/* Scrollad bort från toppen: headern ligger över innehållet och behöver en fyllning, på alla bredder. */
+.site-header.site-header--stuck {
+  background: rgba(8, 4, 4, 0.92);
+  border-bottom: 1px solid rgba(255, 245, 238, 0.12);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    transition: none;
+  }
 }
 
 .site-header-burger {
