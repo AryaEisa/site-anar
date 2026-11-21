@@ -5,49 +5,49 @@ const REVIEWS = [
   {
     id: '2',
     name: 'laleh kafashi',
-    meta: 'för 4 månader sedan',
+    meta: 'för fyra månader sedan',
     text: 'Fantastisk atmosfär, jättegod mat och väldigt trevlig personal! En riktigt fin upplevelse. Rekommenderas varmt.',
     stars: 5,
   },
   {
     id: '3',
     name: 'Ingela Lindahl',
-    meta: '200-300 kr · för 3 månader sedan',
+    meta: '200-300 kr · för tre månader sedan',
     text: 'Mycket vällagat och gott i trevlig miljö.',
     stars: 5,
   },
   {
     id: '4',
     name: 'Marcus V.',
-    meta: 'för 5 månader sedan',
+    meta: 'för fem månader sedan',
     text: 'Autentiska smaker och generösa portioner. Perfekt för en middag med familjen.',
     stars: 5,
   },
   {
     id: '5',
     name: 'Sofia K.',
-    meta: '100-200 kr · för 1 månad sedan',
+    meta: '100-200 kr · för en månad sedan',
     text: 'Lugn stämning och väldigt god saffransrisotto. Personalen tog hand om oss från start.',
     stars: 5,
   },
   {
     id: '6',
     name: 'Jonas P.',
-    meta: 'för 2 månader sedan',
+    meta: 'för två månader sedan',
     text: 'Bra vegetariska alternativ och snabb service trots fullt på helgkväll.',
     stars: 5,
   },
   {
     id: '7',
     name: 'Elin R.',
-    meta: 'för 3 veckor sedan',
+    meta: 'för tre veckor sedan',
     text: 'Fint ställe nära sjukhuset - vi åt lunch och blev positivt överraskade av kvaliteten.',
     stars: 5,
   },
   {
     id: 'ann-britt',
     name: 'Ann-Britt Fagertoft',
-    meta: 'Annat · 200-300 kr · för 2 månader sedan',
+    meta: 'Annat · 200-300 kr · för två månader sedan',
     text: 'Mycket trevligt bemötande. Vi var 5 personer i sällskapet och alla var nöjda med både mat och service.',
     stars: 5,
   },
@@ -88,12 +88,28 @@ const SWING_MS = 620;
 /** Långsam start, mycket snabb mitt, mjuk landning, som en hand. */
 const HAND = 'cubic-bezier(.8,0,.2,1)';
 
+/** Så långt åt höger svingen går, i procent av kortets bredd. */
+const SWING_X = 42;
+
+/**
+ * Svingens längd åt höger: högst 42 %, men aldrig längre än att kortet ryms kvar i kolumnen (regeln är att
+ * det svingande kortet aldrig lämnar kolumnen). Kortet står centrerat, så det är en bit till kolumnens
+ * kant; 32 px räknas av för det lutade hörnet (16 grader) och djupet.
+ */
+function swingReach(el) {
+  const rect = el.getBoundingClientRect();
+  if (!rect.width) return SWING_X;
+  const column = (el.closest('.guest-reviews') ?? document.documentElement).getBoundingClientRect();
+  const room = column.right - rect.right - 32;
+  return Math.max(8, Math.min(SWING_X, (room / rect.width) * 100));
+}
+
 /** Det främre kortets väg runt hörnet till lekens baksida. Ingen opacitet: kortet syns hela vägen. */
-function swingFrames(back) {
+function swingFrames(back, x = SWING_X) {
   return [
     { transform: slot(0).t, filter: 'brightness(1)' },
-    { transform: 'translate3d(42%, -58px, 20px) rotate(16deg)', filter: 'brightness(1)' },
-    { transform: 'translate3d(36%, -50px, -140px) rotate(12deg) scale(.92)', filter: `brightness(${(1 + back.b) / 2})` },
+    { transform: `translate3d(${x}%, -58px, 20px) rotate(16deg)`, filter: 'brightness(1)' },
+    { transform: `translate3d(${(x * 36) / SWING_X}%, -50px, -140px) rotate(12deg) scale(.92)`, filter: `brightness(${(1 + back.b) / 2})` },
     { transform: back.t, filter: `brightness(${back.b})` },
   ];
 }
@@ -132,7 +148,7 @@ export default function GuestReviewCards() {
     if (reducedMotion() || typeof el?.animate !== 'function') return;
     busy.current = true;
     setSwing({ index: was, over: true });
-    const a = el.animate(swingFrames(slot(count - 1)), { duration: SWING_MS, easing: HAND, fill: 'forwards' });
+    const a = el.animate(swingFrames(slot(count - 1), swingReach(el)), { duration: SWING_MS, easing: HAND, fill: 'forwards' });
     anim.current = a;
     // Halvvägs har kortet passerat leken och läggs bakom den.
     timer.current = setTimeout(() => setSwing({ index: was, over: false }), SWING_MS / 2);

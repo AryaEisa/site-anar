@@ -85,7 +85,7 @@ export function validate(
   const problem = (field: string | null, message: string): Problem => ({ field, message })
   if (!ctx.guests) return problem('guests', 'Fyll i antal gäster.')
   if (ctx.guests < ctx.minGuests) return problem('guests', `Minst ${ctx.minGuests} gäster.`)
-  if (ctx.selected === 0) return problem(null, 'Välj minst en rätt eller dryck.')
+  if (ctx.selected === 0) return problem(null, 'Välj minst en maträtt eller dryck.')
   if (!f.deliveryDate) {
     return problem('deliveryDate', `Välj ett datum mellan ${showDate(ctx.dates.min)} och ${showDate(ctx.dates.max)}.`)
   }
@@ -118,11 +118,11 @@ export function guestError(err: unknown, phone?: string): string {
   if (err instanceof ApiError && err.status === 400) {
     const most = /^at most (\d+) portions/.exec(err.message)
     if (most) {
-      return `Det här blir för mycket för en förfrågan på webben: restaurangen tar emot högst ${most[1]} portioner åt gången, och varje dryck räknas som en portion. Kryssa i färre rätter eller drycker${phone ? `, eller ring restaurangen på ${phone}` : ''}.`
+      return `Det här blir för mycket för en förfrågan på webben: restaurangen tar emot högst ${most[1]} portioner åt gången, och varje dryck räknas som en portion. Välj färre maträtter eller drycker${phone ? `, eller ring restaurangen på ${phone}` : ''}.`
     }
     const least = /^at least (\d+) portions/.exec(err.message)
     if (least) {
-      return `Det här blir för litet för en förfrågan: restaurangen behöver minst ${least[1]} portioner, och varje dryck räknas som en portion. Kryssa i fler rätter eller drycker.`
+      return `Det här blir för litet för en förfrågan: restaurangen behöver minst ${least[1]} portioner, och varje dryck räknas som en portion. Välj fler maträtter eller drycker.`
     }
   }
   return cateringApi.errorMessage(err, phone)

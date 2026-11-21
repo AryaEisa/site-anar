@@ -1,12 +1,17 @@
 import { useEffect } from 'react';
+import { useKeepTerms } from '@bookingsystemadvancedorg/site-kit';
 import foundersImg from '../images/aboutus/MustafaAndShima.png';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const CORREN_ARTICLE =
   'https://www.corren.se/nyheter/linkoping/artikel/unga-paret-oppnar-nytt-i-klassiska-linkopingslokalen/lw49dzwr';
 
+// Namn som inte ska översättas: tidningen och parken blev annars "the Östgöta Correspondent" och "Garden Society".
+const KEEP = ['Östgöta Correspondenten', 'Corren', 'Trädgårdsföreningen'];
+
 export default function HistoriaPage() {
   const { t } = useLanguage();
+  useKeepTerms(KEEP);
 
   useEffect(() => {
     window.scrollTo(0, 0);

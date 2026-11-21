@@ -81,8 +81,8 @@ export default function MenuPicker({
         return (
           <section className="cb-group" aria-label={title} key={role}>
             <h2 className="menu-content-title">{title}</h2>
-            {role === 'package' && <p className="cb-note">Pris per gäst. Gästerna delas jämnt på de paket du kryssar i.</p>}
-            {role === 'other' && <p className="cb-note">Skriv hur många portioner du vill ha av det du vill lägga till.</p>}
+            {role === 'package' && <p className="cb-note">Pris per gäst. Gästerna delas jämnt på de paket du väljer.</p>}
+            {role === 'other' && <p className="cb-note">Ange antal portioner för det du vill lägga till.</p>}
             <ul className="cb-list">
               {items.map((u) => {
                 const picked = choice.picked.has(u.id)
@@ -135,7 +135,7 @@ export default function MenuPicker({
                         onChange={(n) => onChange({ ...choice, drinkQty: { ...choice.drinkQty, [u.id]: n } })}
                       />
                     )}
-                    {role === 'drink' && picked && choice.drinkMode === 'perGuest' && guests > 0 && <span className="cb-count">{guests} st</span>}
+                    {role === 'drink' && picked && choice.drinkMode === 'perGuest' && guests > 0 && <span className="cb-count">{`× ${guests}`}</span>}
                   </li>
                 )
               })}
@@ -157,10 +157,12 @@ export default function MenuPicker({
                 </div>
                 <p className="cb-note">
                   {choice.drinkMode === 'perGuest'
-                    ? guests > 0
-                      ? `Med ${guests} gäster blir det ${guests} av varje dryck du kryssat i.`
-                      : 'Fyll i antal gäster, så blir det lika många av varje dryck.'
-                    : 'Skriv hur många du vill ha av varje dryck.'}
+                    ? // Utan siffra i meningen: antalet står vid varje dryck, och en siffra först i en mening
+                      // blir fel ordföljd på spanska och arabiska i översättningen.
+                      guests > 0
+                      ? 'En per gäst av varje vald dryck.'
+                      : 'Fyll i antal gäster, så räknas en per gäst av varje vald dryck.'
+                    : 'Välj hur många du vill ha av varje dryck.'}
                 </p>
               </div>
             )}

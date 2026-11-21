@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { SkelCard, sitePages, useSite } from '@bookingsystemadvancedorg/site-kit';
 import GuestReviewCards from '../components/GuestReviewCards';
+import PoweredByBooqy from '../components/PoweredByBooqy';
 import RestaurantMapSection from '../components/RestaurantMapSection';
 import ReviewsPanel from '../components/ReviewsPanel';
 
@@ -20,6 +21,7 @@ export default function HomePage() {
               <Suspense fallback={<SkelCard label="Hämtar bokningen" />}>
                 <BookingFlow />
               </Suspense>
+              <PoweredByBooqy />
             </div>
           )}
         </div>

@@ -45,7 +45,7 @@ export default function MobilePreFooterNav() {
         <OpeningHoursContent
           className="opening-hours--mobile-pre-footer"
           sectionIds={['restaurant', 'lunch', 'middag']}
-          staticSections
+          accordion
         />
       </div>
     </nav>

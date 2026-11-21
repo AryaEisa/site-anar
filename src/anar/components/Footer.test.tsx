@@ -21,7 +21,7 @@ describe('Footer', () => {
   it('keeps the developer credit name out of machine translation', () => {
     const { container } = render(<MemoryRouter><Footer /></MemoryRouter>)
     const credit = container.querySelector('.site-footer-credit')!
-    expect(credit.textContent).toBe(`Denna hemsida är fullt utvecklad av ${DEVELOPER}`)
+    expect(credit.textContent).toBe(`Designat av ${DEVELOPER}`)
     const name = [...credit.querySelectorAll('[translate="no"]')].map((el) => el.textContent)
     expect(name).toContain('IT Hjälparna Nordic AB')
   })

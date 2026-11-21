@@ -1,6 +1,6 @@
 /**
  * Booqys ordmärke i currentColor (samma teckning som admin och booqy.se),
- * för "Drivs av Booqy" i sidfoten. Namnet läses upp via title.
+ * för "Drivs av Booqy" längst ned i panelen med kitets flöden. Namnet läses upp via title.
  */
 export function BooqyWordmark({ height = 14, className }: { height?: number; className?: string }) {
   return (

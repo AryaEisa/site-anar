@@ -274,3 +274,130 @@
     grid-template-rows: none;
   }
 }
+
+/* Öppettider som dragspel (mobilen längst ned): en rubrik per lista, högst en öppen åt gången.
+   Raderna är centrerade: veckodagen slutar vid mittlinjen och tiderna börjar efter ett mellanrum. */
+.opening-hours--accordion {
+  gap: 0.4rem;
+}
+
+.opening-hours-acc {
+  border: 1px solid rgba(255, 245, 238, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.opening-hours-acc.is-open {
+  border-color: rgba(201, 166, 107, 0.4);
+}
+
+.opening-hours-acc-heading {
+  margin: 0;
+  font: inherit;
+}
+
+.opening-hours-acc-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.65rem 2.75rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: rgba(201, 166, 107, 0.98);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.opening-hours-acc-button::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: 1rem;
+  top: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-right: 2px solid rgba(201, 166, 107, 0.8);
+  border-bottom: 2px solid rgba(201, 166, 107, 0.8);
+  transform: translateY(-65%) rotate(45deg);
+  transition: transform 0.25s ease;
+}
+
+.opening-hours-acc.is-open .opening-hours-acc-button::after {
+  transform: translateY(-25%) rotate(225deg);
+}
+
+.opening-hours-acc-button:hover {
+  background: rgba(139, 24, 32, 0.2);
+}
+
+.opening-hours-acc-button:focus-visible {
+  outline: 2px solid #f5e6d8;
+  outline-offset: -2px;
+}
+
+/* Stängd lista: höjden 0 och osynlig för tangentbord och skärmläsare. Den öppnas mjukt. */
+.opening-hours-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.opening-hours-acc.is-open .opening-hours-acc-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.opening-hours-acc-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.opening-hours-acc-list {
+  margin: 0;
+  padding: 0.2rem 0.75rem 0.75rem;
+  border-top: 1px solid rgba(255, 245, 238, 0.08);
+}
+
+.opening-hours-acc-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 1.25rem;
+  padding: 0.32rem 0;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.opening-hours-acc-row dt {
+  text-align: end;
+  font-weight: 500;
+  color: rgba(255, 245, 238, 0.72);
+  text-transform: capitalize;
+}
+
+.opening-hours-acc-row dd {
+  margin: 0;
+  text-align: start;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 248, 242, 0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening-hours-acc,
+  .opening-hours-acc-button,
+  .opening-hours-acc-button::after,
+  .opening-hours-acc-panel,
+  .opening-hours-acc.is-open .opening-hours-acc-panel {
+    transition: none;
+  }
+}

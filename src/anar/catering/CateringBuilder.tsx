@@ -256,7 +256,7 @@ export default function CateringBuilder() {
       <section className="page-hero">
         <p className="hero-kicker">Catering</p>
         <h1>Räkna på catering</h1>
-        <p className="hero-sub">Kryssa i vad du vill ha och se ett ungefärligt pris direkt. Du får en offert som du godkänner med BankID.</p>
+        <p className="hero-sub">Välj vad du vill ha och se ett ungefärligt pris direkt. Du får en offert som du godkänner med BankID.</p>
         <FlowSteps steps={STEPS} current={currentStep(form, ready)} label="Catering" />
       </section>
       <form className="order-layout cb-form" onSubmit={submit} noValidate>
@@ -274,11 +274,10 @@ export default function CateringBuilder() {
             </label>
           </div>
           <p className="order-hint" id="catering-guest-hint">
-            Minst {minGuests} gäster
-            {tiers.length > 0 && ` · rabatt från ${Math.min(...tiers.map((t) => t.fromPortions))} gäster`} · förberedelsetiden beror på antalet gäster
+            {`Minst ${minGuests} gäster${tiers.length > 0 ? ` · rabatt från ${Math.min(...tiers.map((t) => t.fromPortions))} gäster` : ''} · förberedelsetiden beror på antalet gäster`}
           </p>
           <p className="cb-intro">
-            Kryssa i det du vill ha. Förrätt, varmrätt och efterrätt behöver inget antal: mängden räknas ut åt dig och du ser ett ungefärligt pris. Restaurangen skickar sedan en offert som du kan be att få ändrad innan du godkänner den.
+            Välj det du vill ha. Förrätt, varmrätt och efterrätt behöver inget antal: mängden räknas ut åt dig och du ser ett ungefärligt pris. Restaurangen skickar sedan en offert som du kan be att få ändrad innan du godkänner den.
           </p>
           <MenuPicker
             units={units}
@@ -292,7 +291,7 @@ export default function CateringBuilder() {
           />
           {!ready ? (
             <p className="notice catering-next" role="status">
-              Fyll i antal gäster och kryssa i vad du vill ha, sedan väljer du datum, leverans och dina uppgifter.
+              Fyll i antal gäster och välj vad du vill ha. Därefter anger du datum, leverans och dina uppgifter.
             </p>
           ) : (
             <>
@@ -320,14 +319,12 @@ export default function CateringBuilder() {
                 </div>
                 {quote && (
                   <p className="order-hint">
-                    Tidigast{' '}
-                    {new Date(`${quote.earliestDate}T12:00:00Z`).toLocaleDateString('sv-SE', {
+                    {`Tidigast möjliga datum: ${new Date(`${quote.earliestDate}T12:00:00Z`).toLocaleDateString('sv-SE', {
                       weekday: 'long',
                       day: 'numeric',
                       month: 'long',
                       timeZone: 'Europe/Stockholm',
-                    })}{' '}
-                    för {guests} gäster.
+                    })}.`}
                   </p>
                 )}
                 {delivery && (
@@ -437,7 +434,11 @@ export default function CateringBuilder() {
           )}
         </div>
         <aside className="order-cart" ref={cartRef} aria-label="Kalkyl" aria-busy={quoting}>
-          <h2>Kalkyl{guests > 0 && ` · ${guests} gäster`}</h2>
+          {/* Rubriken och antalet är två textnoder: "Kalkyl · 30 gäster" i ett stycke blev "Calculus" i översättningen, ensamt "Kalkyl" blir "Estimate". */}
+          <h2>
+            <span>Kalkyl</span>
+            {guests > 0 && <span>{` · ${guests} gäster`}</span>}
+          </h2>
           {quote && split ? (
             <>
               <ul className={`cart-list${quoting ? ' is-stale' : ''}`}>
@@ -462,13 +463,13 @@ export default function CateringBuilder() {
                 <span>ca {kr(approxOre(quote.total))}</span>
               </div>
               <p className="cart-note">
-                Varav moms{quote.vatRate ? ` ${quote.vatRate} %` : ''}: ca {kr(approxOre(quote.vat))}
+                {`Varav moms${quote.vatRate ? ` ${quote.vatRate} %` : ''}: ca ${kr(approxOre(quote.vat))}`}
               </p>
             </>
           ) : (
             !quoteError && (
               <p className="cart-empty" role="status">
-                {payload ? 'Räknar…' : `Fyll i antal gäster (minst ${minGuests}) och kryssa i vad du vill ha.`}
+                {payload ? 'Räknar…' : `Fyll i antal gäster (minst ${minGuests}) och välj vad du vill ha.`}
               </p>
             )
           )}
@@ -479,10 +480,10 @@ export default function CateringBuilder() {
           )}
           {nextTier && guests >= minGuests && (
             <p className="cart-note">
-              {nextTier.fromPortions - guests} gäster till ger {nextTier.discountPercent} % rabatt.
+              {`${nextTier.fromPortions - guests} gäster till ger ${nextTier.discountPercent} % rabatt.`}
             </p>
           )}
-          <p className="cart-note catering-estimate">Uppskattat pris. Mängden per rätt räknas ut åt dig, och priset är bindande först när offerten signerats.</p>
+          <p className="cart-note catering-estimate">Uppskattat pris. Mängden för varje maträtt räknas ut åt dig, och priset är bindande först när offerten signerats.</p>
           <label className="booking-check">
             <input type="checkbox" checked={form.accept} {...field('accept')} onChange={(e) => update('accept', e.target.checked)} />
             <span>Jag godkänner att restaurangen kontaktar mig om förfrågan.</span>

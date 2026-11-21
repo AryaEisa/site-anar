@@ -6,6 +6,7 @@ import OpeningHoursDropdown from './OpeningHoursDropdown';
 import OpeningHoursModal from './OpeningHoursModal';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '../i18n/LanguageContext';
+import useHideOnScroll from '../hooks/useHideOnScroll';
 
 const BASE_LEFT_NAV = [
   { key: 'nav.meny', to: '/meny' },
@@ -14,11 +15,8 @@ const BASE_LEFT_NAV = [
   { key: 'nav.catering', to: '/catering' },
 ];
 
-const RIGHT_NAV = [
-  { key: 'nav.historia', to: '/historia' },
-  { key: 'nav.parkering', to: '/parkering' },
-  { key: 'nav.kontakt', to: '/kontakt' },
-];
+// Vår historia och Kontakt ligger i sidfoten (Footer.jsx).
+const RIGHT_NAV = [{ key: 'nav.parkering', to: '/parkering' }];
 
 export default function Header() {
   const { t } = useLanguage();
@@ -36,6 +34,9 @@ export default function Header() {
   const menuBtnRef = useRef(null);
   const openingHoursDesktopRef = useRef(null);
   const prevMenuOpen = useRef(false);
+  const headerRef = useRef(null);
+  // Gömd när man scrollar nedåt, synlig när man scrollar uppåt; alltid synlig medan en meny är öppen.
+  const { hidden, stuck } = useHideOnScroll(headerRef, { paused: menuOpen || hoursModalOpen });
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -53,6 +54,22 @@ export default function Header() {
     };
   }, [menuOpen]);
 
+  // Headerns höjd till CSS (--header-h): kalkylbrickan och andra klistrade delar lägger sig under den,
+  // eller högst upp när den är gömd.
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return undefined;
+    const root = document.documentElement;
+    const set = () => root.style.setProperty('--header-h', `${hidden ? 0 : el.offsetHeight}px`);
+    set();
+    const observer = new ResizeObserver(set);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--header-h');
+    };
+  }, [hidden]);
+
   useEffect(() => {
     if (prevMenuOpen.current && !menuOpen) {
       menuBtnRef.current?.focus();
@@ -62,7 +79,10 @@ export default function Header() {
 
   return (
     <>
-      <header className="site-header">
+      <header
+        ref={headerRef}
+        className={`site-header${stuck ? ' site-header--stuck' : ''}${hidden ? ' site-header--hidden' : ''}`}
+      >
         <div className="site-header-gutter" aria-hidden="true" />
 
         <nav className="site-header-nav site-header-nav--left" aria-label={t('a11y.navLeft')}>

@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useSite } from '@bookingsystemadvancedorg/site-kit';
-import { BooqyWordmark } from '../../shared/BooqyWordmark';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const ALLABOLAG_URL =
@@ -56,17 +55,16 @@ export default function Footer() {
         </div>
       </div>
       <div className="site-footer-sub">
+        {/* På mobil står de i raden ovanför sidfoten (MobilePreFooterNav), så här döljs de där. */}
+        <nav className="site-footer-legal site-footer-pages" aria-label={t('a11y.footerPages')}>
+          <Link to="/historia">{t('nav.historia')}</Link>
+          <Link to="/kontakt">{t('nav.kontakt')}</Link>
+        </nav>
         <nav className="site-footer-legal" aria-label="Juridiskt">
           <Link to="/integritetspolicy">Integritetspolicy</Link>
           <Link to="/cookies">Cookies</Link>
           {config.tenant.features.reservations && <Link to="/bokningsvillkor">Bokningsvillkor</Link>}
         </nav>
-        <p className="site-footer-credit">
-          Drivs av{' '}
-          <span translate="no">
-            <BooqyWordmark className="site-footer-booqy" />
-          </span>
-        </p>
       </div>
     </footer>
   );

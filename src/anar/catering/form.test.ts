@@ -27,7 +27,7 @@ describe('validate', () => {
   it('asks for things in the order the guest fills them in, with the kit wording', () => {
     expect(validate(complete, { ...ctx, guests: 0 })).toEqual({ field: 'guests', message: 'Fyll i antal gäster.' })
     expect(validate(complete, { ...ctx, guests: 10 })).toEqual({ field: 'guests', message: 'Minst 15 gäster.' })
-    expect(validate(complete, { ...ctx, selected: 0 })).toEqual({ field: null, message: 'Välj minst en rätt eller dryck.' })
+    expect(validate(complete, { ...ctx, selected: 0 })).toEqual({ field: null, message: 'Välj minst en maträtt eller dryck.' })
     expect(validate({ ...complete, deliveryDate: '' }, ctx)?.message).toBe('Välj ett datum mellan 25/11/2026 och 20/11/2027.')
     expect(validate({ ...complete, street: '' }, ctx)).toEqual({ field: 'street', message: 'Fyll i leveransadressen (gata, postnummer och ort).' })
     expect(validate({ ...complete, postalCode: '12' }, ctx)?.field).toBe('postalCode')

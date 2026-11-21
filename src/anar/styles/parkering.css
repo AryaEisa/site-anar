@@ -111,7 +111,6 @@
   border-radius: 10px;
   z-index: 0;
   font-family: 'Outfit', system-ui, sans-serif;
-  touch-action: pan-x pan-y;
 }
 
 .parking-page-leaflet .leaflet-popup-content-wrapper {
@@ -251,4 +250,58 @@
   .parking-page {
     max-width: min(48rem, 100%);
   }
+}
+
+/* Zoomknapparna (+ och -) i Anars mörka färger, med tryckyta på minst 44 px */
+.parking-page-leaflet .leaflet-control-zoom {
+  border: 1px solid rgba(201, 166, 107, 0.45);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.parking-page-leaflet .leaflet-control-zoom a,
+.parking-page-leaflet.leaflet-touch .leaflet-control-zoom a {
+  width: 44px;
+  height: 44px;
+  line-height: 42px;
+  font-size: 1.35rem;
+  color: #f5e6d8;
+  background: rgba(14, 9, 8, 0.92);
+  border-bottom-color: rgba(201, 166, 107, 0.3);
+}
+
+.parking-page-leaflet .leaflet-control-zoom a:hover,
+.parking-page-leaflet .leaflet-control-zoom a:focus-visible {
+  color: #fff;
+  background: rgba(60, 20, 22, 0.95);
+}
+
+.parking-page-leaflet .leaflet-control-zoom a.leaflet-disabled {
+  color: rgba(245, 230, 216, 0.35);
+  background: rgba(14, 9, 8, 0.8);
+}
+
+/* Reserv när kartrutorna inte laddas (ParkingMap.jsx): en länk i stället för en grå yta */
+.parking-page-map-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  margin: 0;
+  padding: 1rem;
+  text-align: center;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 245, 238, 0.9);
+  background: rgba(12, 8, 6, 0.9);
+}
+
+.parking-page-map-fallback a {
+  color: #e8d4b8;
+  font-weight: 600;
 }

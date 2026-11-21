@@ -4,7 +4,10 @@
      (dvh/vh på fixed-lager räknas om i ~0.3-1s → object-fit: cover ser ut att zooma). */
   min-height: 100vh;
   min-height: 100lvh;
+  /* clip i stället för hidden där det finns: hidden gör .landing till en rullyta, och då slutar
+     position: sticky att fungera (headern, kalkylbrickan). clip beskär lika men rullar inte. */
   overflow-x: hidden;
+  overflow-x: clip;
   background: #0a0606;
 }
 

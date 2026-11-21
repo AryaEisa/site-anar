@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -36,10 +36,29 @@ describe('App on SiteProvider', () => {
 
     expect((await screen.findAllByRole('link', { name: 'Meny' })).length).toBeGreaterThan(0)
     expect(fetchMock.mock.calls[0][0]).toBe('https://api.test/site-config?slug=testkrogen')
-    expect(screen.getAllByRole('link', { name: 'Boka bord' }).length).toBeGreaterThan(0)
     expect(screen.getByRole('link', { name: 'Beställ hem' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Integritetspolicy' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Cookies' })).toBeInTheDocument()
+  })
+
+  it('shows the order bar buttons for the other pages only: each page hides its own', async () => {
+    window.history.replaceState(null, '', '/?restaurang=testkrogen')
+    const cfg = siteConfig({ features: { reservations: true, ordering: true } })
+    cfg.locations[0] = { ...cfg.locations[0], ordering: { pickup: true, prepMinutes: 20 } }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(cfg) : json({ items: [] }))))
+    const bar = () => within(screen.getByRole('region', { name: 'Beställ och boka' })).getAllByRole('link').map((l) => l.textContent)
+
+    for (const [path, expected] of [
+      ['/', ['Beställ avhämtning', 'Beställ hem']],
+      ['/meny', ['Boka bord', 'Beställ avhämtning', 'Beställ hem']],
+      ['/bestall', ['Boka bord', 'Beställ hem']],
+      ['/bestall-hem', ['Boka bord', 'Beställ avhämtning']],
+    ] as const) {
+      const view = renderSite(path)
+      await screen.findByRole('region', { name: 'Beställ och boka' })
+      expect(bar(), path).toEqual(expected)
+      view.unmount()
+    }
   })
 
   it('hides booking when the plan has no reservations', async () => {
@@ -120,6 +139,43 @@ describe('App on SiteProvider', () => {
     expect(screen.queryByText('Under utveckling')).not.toBeInTheDocument()
     // Headern finns kvar även här.
     expect(screen.getAllByRole('link', { name: 'Meny' }).length).toBeGreaterThan(0)
+  })
+
+  it('has Vår historia and Kontakt in the footer, not in the header or the phone menu, and says who designed the site', async () => {
+    window.history.replaceState(null, '', '/?restaurang=testkrogen')
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(siteConfig()) : json({ items: [] }))))
+
+    renderSite()
+
+    await screen.findAllByRole('link', { name: 'Meny' })
+    const header = screen.getByRole('banner')
+    expect(within(header).getByRole('link', { name: 'Parkering' })).toBeInTheDocument()
+    expect(within(header).queryByRole('link', { name: 'Vår historia' })).not.toBeInTheDocument()
+    expect(within(header).queryByRole('link', { name: 'Kontakt' })).not.toBeInTheDocument()
+    const drawer = [...document.querySelectorAll('#mobile-drawer a')].map((a) => a.textContent)
+    expect(drawer).toContain('Parkering')
+    expect(drawer).not.toContain('Vår historia')
+    expect(drawer).not.toContain('Kontakt')
+
+    const footer = screen.getByRole('contentinfo')
+    expect(within(footer).getByRole('link', { name: 'Vår historia' })).toHaveAttribute('href', '/historia')
+    expect(within(footer).getByRole('link', { name: 'Kontakt' })).toHaveAttribute('href', '/kontakt')
+    expect(within(footer).getByText(/Designat av/)).toHaveTextContent('Designat av IT Hjälparna Nordic AB')
+    expect(within(footer).getByRole('link', { name: 'www.ithjalparna.se' })).toHaveAttribute('href', 'https://www.ithjalparna.se')
+    expect(footer).not.toHaveTextContent('fullt utvecklad')
+  })
+
+  it('puts "Drivs av Booqy" last in the panel with the booking flow, not in the footer', async () => {
+    window.history.replaceState(null, '', '/?restaurang=testkrogen')
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(siteConfig()) : json({ items: [] }))))
+
+    const { container } = renderSite()
+
+    await screen.findAllByRole('link', { name: 'Meny' })
+    const panel = container.querySelector('.kit-panel') as HTMLElement
+    expect(panel.lastElementChild).toHaveTextContent('Drivs av')
+    expect(within(panel).getByTitle('Booqy')).toBeInTheDocument()
+    expect(screen.getByRole('contentinfo')).not.toHaveTextContent('Drivs av')
   })
 
   it("shows the dishes' photos from Booqy on the menu, and nothing for a dish without one", async () => {

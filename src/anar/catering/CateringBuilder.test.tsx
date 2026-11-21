@@ -131,8 +131,8 @@ describe('Catering: tick what you want', () => {
 
     // en per gäst av varje är förvalt, och antalet syns vid varje dryck
     expect(screen.getByRole('radio', { name: 'En per gäst av varje' })).toBeChecked()
-    expect(screen.getByText('Med 30 gäster blir det 30 av varje dryck du kryssat i.')).toBeInTheDocument()
-    expect(screen.getAllByText('30 st')).toHaveLength(2)
+    expect(screen.getByText('En per gäst av varje vald dryck.')).toBeInTheDocument()
+    expect(screen.getAllByText('× 30')).toHaveLength(2)
 
     await user.click(screen.getByRole('radio', { name: 'Jag väljer antal själv' }))
     const must = screen.getByLabelText('Antal Äppelmust')
@@ -155,7 +155,7 @@ describe('Catering: tick what you want', () => {
   it('shows the next steps only when there are guests and something ticked', async () => {
     const { user } = await openWith30Guests()
     expect(screen.queryByRole('heading', { name: '2. När och var' })).not.toBeInTheDocument()
-    expect(screen.getByText(/Fyll i antal gäster och kryssa i vad du vill ha/)).toBeInTheDocument()
+    expect(screen.getByText(/Fyll i antal gäster och välj vad du vill ha/)).toBeInTheDocument()
     await tick(user, 'Grillad lax')
     expect(await screen.findByRole('heading', { name: '2. När och var' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '3. Dina uppgifter' })).toBeInTheDocument()

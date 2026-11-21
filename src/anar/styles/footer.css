@@ -125,6 +125,22 @@
   justify-self: auto;
 }
 
+/* Länkarna i sidfoten: tryckyta på minst 44 px på pekskärm */
+@media (max-width: 1023px) {
+  .site-footer-sub .site-footer-legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* Mobil: Vår historia och Kontakt står redan i raden ovanför sidfoten (MobilePreFooterNav) */
+@media (max-width: 800px) {
+  .site-footer-sub .site-footer-pages {
+    display: none;
+  }
+}
+
 @media (max-width: 720px) {
   .site-footer-main {
     grid-template-columns: 1fr;
