@@ -36,10 +36,23 @@ describe('App on SiteProvider', () => {
 
     expect((await screen.findAllByRole('link', { name: 'Meny' })).length).toBeGreaterThan(0)
     expect(fetchMock.mock.calls[0][0]).toBe('https://api.test/site-config?slug=testkrogen')
-    expect(screen.getAllByRole('link', { name: 'Boka bord' }).length).toBeGreaterThan(0)
     expect(screen.getByRole('link', { name: 'Beställ hem' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Integritetspolicy' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Cookies' })).toBeInTheDocument()
+  })
+
+  it('has no Boka bord button on the landing page, where the booking is, but on the other pages', async () => {
+    window.history.replaceState(null, '', '/?restaurang=testkrogen')
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(siteConfig()) : json({ items: [] }))))
+
+    const home = renderSite('/')
+    await screen.findAllByRole('link', { name: 'Meny' })
+    expect(screen.queryByRole('link', { name: 'Boka bord' })).not.toBeInTheDocument()
+    home.unmount()
+
+    renderSite('/meny')
+    await screen.findAllByRole('link', { name: 'Meny' })
+    expect(screen.getByRole('link', { name: 'Boka bord' })).toHaveAttribute('href', '/')
   })
 
   it('hides booking when the plan has no reservations', async () => {
