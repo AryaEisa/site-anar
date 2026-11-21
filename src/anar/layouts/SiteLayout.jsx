@@ -92,9 +92,10 @@ export default function SiteLayout() {
         <Suspense fallback={<SkelCard label="Hämtar sidan" />}>
           <Outlet />
         </Suspense>
-        <MobilePreFooterNav />
         {marketing && <OfferCard key={location.locationId} />}
-        <Footer />
+        <Footer>
+          <MobilePreFooterNav />
+        </Footer>
       </div>
     </div>
   );
