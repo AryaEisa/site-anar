@@ -1,7 +1,7 @@
 /**
  * Planritningen i bokningens steg 3 börjar i 2D; 3D är ett val.
  *
- * site-kit 0.3.0 startar planen i 3D (`useState("3d")`, ingen inställning), så
+ * site-kit (också 0.5.0) startar planen i 3D (`useState("3d")`, ingen inställning), så
  * den här modulen trycker på kitets "2D"-knapp första gången en växlare
  * (`.floor-view-toggle`) ritas. Klicket sker i samma ögonblick som växlaren
  * kommer in i sidan, före första bildrutan, så ingen ser 3D blinka förbi.

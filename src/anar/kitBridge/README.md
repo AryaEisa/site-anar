@@ -1,22 +1,16 @@
-# Temporary bridge for site-kit 0.3.0
+# Temporary bridge: the floor plan starts in 2D
 
-site-kit dev has the new table picker: tables that can be booked breathe,
-tables of the wrong size are dimmed, a picked table pops with a ring, and the
-page glides to the next step instead of jumping. This site still runs the
-published site-kit 0.3.0, so this folder gives it the same look and
-behaviour without forking the kit:
+site-kit (0.5.0 too) starts the floor plan in booking step 3 in 3D
+(`useState('3d')` in `BokaBordPage.tsx`, no setting). Anar wants 2D first,
+with 3D as a choice, so `floorView.ts` presses the kit's "2D" button the
+first time a view toggle (`.floor-view-toggle`) is drawn, before the first
+frame. The guest's own choice is remembered until the page reloads.
+Installed in `src/main.tsx` (`installDefault2dView()`).
 
-- `src/anar/styles/table-picker.css`: the kit's `table-picker.css` rules and
-  a few resets of 0.3.0's old table colours.
-- `tablePicker.ts`: the click effect, the delayed eased scroll and focus, the
-  breathing sync and the step 3 hint text. Installed in `src/main.tsx`.
-- `glide.ts`: a copy of the kit's `src/shared/glide.ts`.
+When the site bumps to a site-kit release with its own default view (or a
+setting for it), delete this folder and the `installDefault2dView()` call in
+`src/main.tsx`.
 
-Anar's colours are the `--seat-*` tokens in `src/anar/styles/kit.css`. They
-stay after the bridge goes.
-
-The script switches itself off when the kit draws tables with
-`data-table-id`. When the site upgrades to a site-kit release that has
-`src/styles/table-picker.css`, delete this folder,
-`src/anar/styles/table-picker.css`, its import in `src/anar/styles/index.css`
-and the `installTablePickerBridge()` call in `src/main.tsx`.
+Anar's table colours are the `--seat-*` tokens in `src/anar/styles/kit.css`;
+the table picker itself (breathing tables, pick effect, glide) is the kit's
+since 0.4.0.

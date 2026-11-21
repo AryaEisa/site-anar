@@ -14,7 +14,7 @@ function MenyDish({ item }) {
       <div className="meny-sublist">
         <DishPhoto item={item} />
         <h3 className="meny-sublist-title">
-          {item.name}
+          <span translate="no">{item.name}</span>
           {price && ` ${price}`}
         </h3>
         <ul className="meny-bullets">
@@ -29,7 +29,7 @@ function MenyDish({ item }) {
     <article className="meny-dish">
       <DishPhoto item={item} />
       <h3 className="meny-dish-title">
-        {item.name}
+        <span translate="no">{item.name}</span>
         {price && ` - ${price}`}
       </h3>
       {text.map((p, i) => (
@@ -146,9 +146,14 @@ export default function MenyCategoryPage({
       </header>
 
       <div className="meny-layout">
-        <nav className="meny-filter" aria-label={t(filterAriaKey)}>
+        <nav className="meny-filter" aria-labelledby={`${domPrefix}-filter-aria`}>
+          <span id={`${domPrefix}-filter-aria`} className="sr-only">
+            {t(filterAriaKey)}
+          </span>
           <div className="meny-filter-desktop">
-            <div className="meny-filter-label">{t('meny.filterLabel')}</div>
+            <div className="meny-filter-label">
+              {t('meny.filterLabel')}
+            </div>
             <div className="meny-filter-list" role="tablist" aria-orientation="vertical">
               {sections.map((s) => (
                 <button
@@ -177,7 +182,9 @@ export default function MenyCategoryPage({
               onClick={() => setFilterSheetOpen(true)}
             >
               <span className="meny-filter-open-row">
-                <span className="meny-filter-open-kicker">{t('meny.chooseCategory')}</span>
+                <span className="meny-filter-open-kicker">
+                  {t('meny.chooseCategory')}
+                </span>
                 <span className="meny-filter-open-chevron" aria-hidden="true">
                   ▼
                 </span>
@@ -241,7 +248,11 @@ export default function MenyCategoryPage({
                 </li>
               ))}
             </ul>
-            <button type="button" className="meny-sheet-close" onClick={() => setFilterSheetOpen(false)}>
+            <button
+              type="button"
+              className="meny-sheet-close"
+              onClick={() => setFilterSheetOpen(false)}
+            >
               {t('meny.close')}
             </button>
           </div>

@@ -11,6 +11,9 @@
   top: 0;
   z-index: 30;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.25s ease, border-color 0.25s ease;
+  /* Layouten är vänster till höger även när sidan är arabiska eller persiska (html dir=rtl): hamburgaren ligger fysiskt till höger, som panelen. */
+  direction: ltr;
+  unicode-bidi: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
@@ -38,6 +41,28 @@
   .site-header {
     transition: none;
   }
+}
+
+/* Höger kolumn: länkarna och, längst till höger, språkväljaren (och menyknappen på telefon). */
+.site-header-end {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(0.5rem, 1.2vw, 1rem);
+  min-width: 0;
+}
+
+.site-header-end .site-header-nav--right {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.site-header-tools {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
 }
 
 .site-header-burger {
@@ -197,9 +222,10 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  /* Alla länkar (och Öppettider-knappen) på samma linje på båda sidor om loggan */
+  /* Alla länkar (och Öppettider-knappen) på samma linje på båda sidor om loggan.
+     Tätare än Figma (1,18vw) så att länkarna till höger ryms på en rad bredvid språkväljaren från 1366 px. */
   align-items: center;
-  gap: clamp(0.35rem, 1.18vw, 1.0625rem);
+  gap: clamp(0.25rem, 0.8vw, 1.0625rem);
 }
 
 .site-header-nav li {
@@ -225,7 +251,7 @@
   text-transform: uppercase;
   color: rgba(255, 248, 242, 0.88);
   text-decoration: none;
-  padding: 0.35rem 0.5rem;
+  padding: 0.35rem;
   border-radius: 2px;
   transition: color 0.2s ease, background 0.2s ease;
 }
@@ -258,7 +284,8 @@
 /* Under 1074px viewport: hamburger + sidomeny i stället för två nav-rader */
 @media (max-width: 1073px) {
   .site-header {
-    grid-template-columns: 2.75rem 1fr 2.75rem;
+    /* Lika breda sidor: loggan står mitt i bandet även med språkväljaren till höger. */
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: 0.5rem;
     padding-left: clamp(0.75rem, 3vw, 1.25rem);
     padding-right: clamp(0.75rem, 3vw, 1.25rem);
@@ -271,7 +298,10 @@
 
   .site-header-burger {
     display: flex;
-    justify-self: end;
+  }
+
+  .site-header-end {
+    justify-content: flex-end;
   }
 
   .site-header-gutter {

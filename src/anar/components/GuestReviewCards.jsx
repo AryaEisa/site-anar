@@ -161,12 +161,15 @@ export default function GuestReviewCards() {
   return (
     <div
       className="guest-reviews"
-      aria-label={`${count} ${t('guestReviews.aria')}`}
+      aria-labelledby="guest-reviews-label"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
+      <span id="guest-reviews-label" className="sr-only">
+        {`${count} ${t('guestReviews.aria')}`}
+      </span>
       <div className="guest-reviews-stack" onClick={flip}>
         {REVIEWS.map((review, index) => {
           const pos = (index - front + count) % count;
@@ -190,11 +193,13 @@ export default function GuestReviewCards() {
               aria-hidden={!isFront}
             >
               <div className="guest-reviews-head">
-                <span className="guest-reviews-avatar" aria-hidden="true">
+                <span className="guest-reviews-avatar" aria-hidden="true" translate="no">
                   {initials(review.name)}
                 </span>
                 <div>
-                  <cite className="guest-reviews-name">{review.name}</cite>
+                  <cite className="guest-reviews-name" translate="no">
+                    {review.name}
+                  </cite>
                   <p className="guest-reviews-meta">{review.meta}</p>
                 </div>
               </div>

@@ -27,7 +27,10 @@ export default function KolgrillPage() {
       {dishes.length === 0 ? (
         <MenuState loading={loading} error={error} retry={retry} />
       ) : (
-        <section className="kolgrill-panel" aria-label={t('kolgrill.panelAria')}>
+        <section className="kolgrill-panel" aria-labelledby="kolgrill-panel-label">
+          <span id="kolgrill-panel-label" className="sr-only">
+            {t('kolgrill.panelAria')}
+          </span>
           <div className="kolgrill-dishes">
             {dishes.map((d) => {
               const price = priceText(d);
@@ -36,7 +39,7 @@ export default function KolgrillPage() {
                 <article key={d.menuItemId} className="kolgrill-dish">
                   <DishPhoto item={d} />
                   <h2 className="kolgrill-dish-title">
-                    {d.name}
+                    <span translate="no">{d.name}</span>
                     {price && ` - ${price}`}
                   </h2>
                   {text.map((p, i) => (

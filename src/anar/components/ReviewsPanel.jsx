@@ -27,7 +27,7 @@ export default function ReviewsPanel() {
           >
             <img src={googleLogo} alt="Google" className="reviews-panel-badge-logo" width={36} height={36} />
             <div className="reviews-panel-badge-text">
-              <span className="reviews-panel-badge-label">Google</span>
+              <span className="reviews-panel-badge-label" translate="no">Google</span>
               <span className="reviews-panel-badge-score" aria-label={t('reviews.scoreGoogle')}>
                 4,6<span className="reviews-panel-badge-max">/5</span>
               </span>
@@ -41,7 +41,7 @@ export default function ReviewsPanel() {
           >
             <img src={foodoraLogo} alt="foodora" className="reviews-panel-badge-logo" width={36} height={36} />
             <div className="reviews-panel-badge-text">
-              <span className="reviews-panel-badge-label">foodora</span>
+              <span className="reviews-panel-badge-label" translate="no">foodora</span>
               <span className="reviews-panel-badge-score" aria-label={t('reviews.scoreFoodora')}>
                 4,5<span className="reviews-panel-badge-max">/5</span>
               </span>

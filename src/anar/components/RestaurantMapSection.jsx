@@ -20,7 +20,7 @@ export default function RestaurantMapSection() {
         </h2>
         <p className="home-map-address">
           <span className="home-map-name">{name}</span>
-          <span className="home-map-lines">
+          <span className="home-map-lines" translate="no">
             {LINE1}
             <br />
             {LINE2}

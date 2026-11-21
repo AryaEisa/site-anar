@@ -1,6 +1,7 @@
 @import './global.css';
 @import './landing.css';
 @import './header.css';
+@import './language-switcher.css';
 @import './opening-hours.css';
 @import './order-bar.css';
 @import './desk-split.css';
@@ -19,7 +20,5 @@
 @import './catering.css';
 @import './dish-photo.css';
 @import "./kit.css";
-@import './table-picker.css';
 @import './touch.css';
 @import './stable.css';
-@import './checkboxes.css';

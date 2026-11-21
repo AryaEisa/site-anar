@@ -5,6 +5,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 const ALLABOLAG_URL =
   'https://www.allabolag.se/foretag/anar-ab/link%C3%B6ping/restauranger/2KIC4IUI5YH9F';
 
+export const DEVELOPER = 'IT Hjälparna Nordic AB';
+
 export default function Footer() {
   const { t } = useLanguage();
   const { config } = useSite();
@@ -21,14 +23,25 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span className="site-footer-org-name">{legalName}</span>
-          {config.legal.orgNumber && <span className="site-footer-org-number">{config.legal.orgNumber}</span>}
+          <span className="site-footer-org-name" translate="no">
+            {legalName}
+          </span>
+          {config.legal.orgNumber && (
+            <span className="site-footer-org-number" translate="no">
+              {config.legal.orgNumber}
+            </span>
+          )}
         </a>
         <p className="site-footer-rights">
-          © {year} {legalName}. {t('footer.rights')}
+          © {year} <span translate="no">{legalName}</span>.{' '}
+          <span>{t('footer.rights')}</span>
         </p>
         <div className="site-footer-credit-block">
-          <p className="site-footer-credit">{t('footer.credit')}</p>
+          <p className="site-footer-credit">
+            {t('footer.credit')}{' '}
+            {/* The developer's company name is never translated. */}
+            <span translate="no">{DEVELOPER}</span>
+          </p>
           <p className="site-footer-dev-site">
             <a
               className="site-footer-dev-link"

@@ -7,7 +7,10 @@ import { BooqyWordmark } from '../../shared/BooqyWordmark';
 export default function PoweredByBooqy() {
   return (
     <p className="kit-panel-credit">
-      Drivs av <BooqyWordmark className="kit-panel-booqy" />
+      Drivs av{' '}
+      <span translate="no">
+        <BooqyWordmark className="kit-panel-booqy" />
+      </span>
     </p>
   );
 }

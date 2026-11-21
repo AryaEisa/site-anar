@@ -23,7 +23,7 @@
   letter-spacing: 0.04em;
   color: rgba(201, 166, 107, 0.98);
   padding: 0.55rem 0.65rem;
-  padding-right: 1.75rem;
+  padding-inline-end: 1.75rem;
   position: relative;
   transition: background 0.2s ease;
 }
@@ -35,7 +35,7 @@
 .opening-hours-summary::after {
   content: '';
   position: absolute;
-  right: 0.65rem;
+  inset-inline-end: 0.65rem;
   top: 50%;
   width: 0.45rem;
   height: 0.45rem;
@@ -63,7 +63,7 @@
 .opening-hours-table th,
 .opening-hours-table td {
   padding: 0.35rem 0.65rem;
-  text-align: left;
+  text-align: start;
   font-weight: 400;
   border-top: 1px solid rgba(255, 245, 238, 0.08);
 }
@@ -99,7 +99,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0.35rem 0.5rem;
+  padding: 0.35rem;
   border-radius: 2px;
   transition: color 0.2s ease, background 0.2s ease;
 }

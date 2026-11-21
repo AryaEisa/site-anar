@@ -26,10 +26,10 @@
 .desk-split .booking {
   width: 100%;
   max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 0;
-  padding-right: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
 }
 
 @media (min-width: 801px) {

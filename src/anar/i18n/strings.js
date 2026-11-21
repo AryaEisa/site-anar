@@ -77,7 +77,8 @@ export const STRINGS = {
   'orderBar.pickup': 'Beställ avhämtning',
 
   'footer.rights': 'Alla rättigheter förbehållna.',
-  'footer.credit': 'Designat av It Hjälparna Nordic AB',
+  // Meningen före bolagsnamnet (Footer.jsx lägger till namnet, som aldrig översätts).
+  'footer.credit': 'Designat av',
 
   'map.title': 'Hitta hit',
   'map.name': 'ANAR Restaurang & Bar',

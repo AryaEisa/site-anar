@@ -141,7 +141,7 @@ describe('App on SiteProvider', () => {
     const footer = screen.getByRole('contentinfo')
     expect(within(footer).getByRole('link', { name: 'Vår historia' })).toHaveAttribute('href', '/historia')
     expect(within(footer).getByRole('link', { name: 'Kontakt' })).toHaveAttribute('href', '/kontakt')
-    expect(within(footer).getByText('Designat av It Hjälparna Nordic AB')).toBeInTheDocument()
+    expect(within(footer).getByText(/Designat av/)).toHaveTextContent('Designat av IT Hjälparna Nordic AB')
     expect(within(footer).getByRole('link', { name: 'www.ithjalparna.se' })).toHaveAttribute('href', 'https://www.ithjalparna.se')
     expect(footer).not.toHaveTextContent('fullt utvecklad')
   })
