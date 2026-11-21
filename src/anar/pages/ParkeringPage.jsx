@@ -1,14 +1,20 @@
 import { useEffect, useMemo } from 'react';
+import { useKeepTerms } from '@bookingsystemadvancedorg/site-kit';
 import ParkingMap from '../components/ParkingMap';
-import { PARKING_LOTS } from '../data/parkingData';
+import { ANAR, PARKING_LOTS } from '../data/parkingData';
 import { useLanguage } from '../i18n/LanguageContext';
 
 function mapsPlaceUrl(address) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
 
+// Parkeringarnas namn och adresser översätts aldrig: tjänsten ändrar annars gatunamn (Barnhemsgatan blev
+// Ornhemsgatan) och tappar ö:et i Linköping.
+const KEEP = [ANAR.address, ...PARKING_LOTS.flatMap((l) => [l.name, l.address])];
+
 export default function ParkeringPage() {
   const { t } = useLanguage();
+  useKeepTerms(KEEP);
   const sorted = useMemo(
     () => [...PARKING_LOTS].sort((a, b) => a.distanceM - b.distanceM),
     []
@@ -35,9 +41,7 @@ export default function ParkeringPage() {
           {t('parkering.mapH2')}
         </h2>
         <p className="parking-page-map-note">
-          {t('parkering.mapNoteBefore')}
-          <strong>{t('parkering.mapNoteName')}</strong>
-          {t('parkering.mapNoteAfter')}
+          {t('parkering.mapNote')}
         </p>
         <div className="parking-page-frame parking-page-frame--leaflet">
           <ParkingMap />

@@ -58,7 +58,7 @@ export default function OpeningHoursContent({
         {section.rows.map((row) => (
           <tr key={`${section.id}-${row.dayKey}`}>
             <th scope="row">{row.label ?? t(`days.${row.dayKey}`)}</th>
-            <td>{row.closed ? t('hours.closed') : row.hours}</td>
+            <td>{row.closed ? t('hours.closed') : <span dir="ltr">{row.hours}</span>}</td>
           </tr>
         ))}
       </tbody>
@@ -92,7 +92,7 @@ export default function OpeningHoursContent({
                     {section.rows.map((row) => (
                       <div className="opening-hours-acc-row" key={`${section.id}-${row.dayKey}`}>
                         <dt>{row.label ?? t(`days.${row.dayKey}`)}</dt>
-                        <dd>{row.closed ? t('hours.closed') : row.hours}</dd>
+                        <dd>{row.closed ? t('hours.closed') : <span dir="ltr">{row.hours}</span>}</dd>
                       </div>
                     ))}
                   </dl>

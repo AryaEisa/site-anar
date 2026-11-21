@@ -228,12 +228,10 @@ export const STRINGS = {
   'parkering.introLogo': 'Anar-logotypen',
   'parkering.introEnd': ' markerar restaurangen, blå nål = parkering.',
   'parkering.mapH2': 'Karta',
-  'parkering.mapNoteBefore': 'Alla platser och ',
-  'parkering.mapNoteName': 'Anar',
-  'parkering.mapNoteAfter':
-    ' (Djurgårdsgatan 33A, 582 29 Linköping) visas som punkter. Klicka på en punkt för detaljer.',
+  // En enda mening i en enda textnod: delas den kring ett namn översätts delarna var för sig, och dåligt.
+  'parkering.mapNote': 'Alla parkeringar och Anar visas som punkter. Klicka på en punkt för detaljer.',
   'parkering.listH2': 'Platser och avstånd',
-  'parkering.spaces': 'platser',
+  'parkering.spaces': 'parkeringsplatser',
   'parkering.mapsLink': 'Visa på Google Maps',
 
   'kontakt.eyebrow': 'Hör av dig',

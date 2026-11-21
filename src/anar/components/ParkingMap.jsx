@@ -95,7 +95,7 @@ export default function ParkingMap() {
             <Popup>
               <strong>{lot.name}</strong>
               <br />
-              ~{lot.distanceM} m från Anar · {lot.spaces} platser
+              ~{lot.distanceM} m från Anar · {lot.spaces} parkeringsplatser
               <br />
               {lot.address}
               <br />
