@@ -41,18 +41,24 @@ describe('App on SiteProvider', () => {
     expect(screen.getByRole('link', { name: 'Cookies' })).toBeInTheDocument()
   })
 
-  it('has no Boka bord button on the landing page, where the booking is, but on the other pages', async () => {
+  it('shows the order bar buttons for the other pages only: each page hides its own', async () => {
     window.history.replaceState(null, '', '/?restaurang=testkrogen')
-    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(siteConfig()) : json({ items: [] }))))
+    const cfg = siteConfig({ features: { reservations: true, ordering: true } })
+    cfg.locations[0] = { ...cfg.locations[0], ordering: { pickup: true, prepMinutes: 20 } }
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(cfg) : json({ items: [] }))))
+    const bar = () => within(screen.getByRole('region', { name: 'Beställ och boka' })).getAllByRole('link').map((l) => l.textContent)
 
-    const home = renderSite('/')
-    await screen.findAllByRole('link', { name: 'Meny' })
-    expect(screen.queryByRole('link', { name: 'Boka bord' })).not.toBeInTheDocument()
-    home.unmount()
-
-    renderSite('/meny')
-    await screen.findAllByRole('link', { name: 'Meny' })
-    expect(screen.getByRole('link', { name: 'Boka bord' })).toHaveAttribute('href', '/')
+    for (const [path, expected] of [
+      ['/', ['Beställ avhämtning', 'Beställ hem']],
+      ['/meny', ['Boka bord', 'Beställ avhämtning', 'Beställ hem']],
+      ['/bestall', ['Boka bord', 'Beställ hem']],
+      ['/bestall-hem', ['Boka bord', 'Beställ avhämtning']],
+    ] as const) {
+      const view = renderSite(path)
+      await screen.findByRole('region', { name: 'Beställ och boka' })
+      expect(bar(), path).toEqual(expected)
+      view.unmount()
+    }
   })
 
   it('hides booking when the plan has no reservations', async () => {

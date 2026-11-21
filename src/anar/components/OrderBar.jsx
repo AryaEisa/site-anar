@@ -4,9 +4,9 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 /**
  * Knapparna under headern. Boka bord och Beställ avhämtning (kitets flöden)
- * visas bara när restaurangens plan har dem, och Boka bord inte på startsidan
- * (där är bokningen själva sidan); Beställ hem (Uber Eats/foodora)
- * är en vanlig sida.
+ * visas bara när restaurangens plan har dem; Beställ hem (Uber Eats/foodora)
+ * är en vanlig sida. Varje sida döljer sin egen knapp, så att den som står på
+ * startsidan (bokningen), Beställ avhämtning eller Beställ hem ser de två andra.
  */
 export default function OrderBar() {
   const { t } = useLanguage();
@@ -15,9 +15,9 @@ export default function OrderBar() {
   const { features } = config.tenant;
   const canBook = Boolean(features.reservations);
   const canPickup = Boolean(features.ordering && location.ordering?.pickup);
+  const onHome = pathname === '/'; // startsidan är bokningen
+  const onPickup = pathname === '/bestall';
   const onBestallPage = pathname === '/bestall-hem';
-  // Startsidan är bokningen: knappen dit behövs på de andra sidorna, inte där.
-  const onHome = pathname === '/';
 
   return (
     <section
@@ -30,14 +30,16 @@ export default function OrderBar() {
             {t('orderBar.book')}
           </Link>
         )}
-        {canPickup && (
+        {canPickup && !onPickup && (
           <Link className="order-bar-cta order-bar-cta--secondary" to="/bestall">
             {t('orderBar.pickup')}
           </Link>
         )}
-        <Link className="order-bar-cta" to="/bestall-hem" aria-current={onBestallPage ? 'page' : undefined}>
-          {t('orderBar.orderHome')}
-        </Link>
+        {!onBestallPage && (
+          <Link className="order-bar-cta" to="/bestall-hem">
+            {t('orderBar.orderHome')}
+          </Link>
+        )}
       </div>
     </section>
   );
