@@ -158,11 +158,30 @@ describe('App on SiteProvider', () => {
     expect(drawer).not.toContain('Kontakt')
 
     const footer = screen.getByRole('contentinfo')
-    expect(within(footer).getByRole('link', { name: 'Vår historia' })).toHaveAttribute('href', '/historia')
-    expect(within(footer).getByRole('link', { name: 'Kontakt' })).toHaveAttribute('href', '/kontakt')
+    // Sidfoten har länkarna två gånger: på mobil i blocket överst (öppettider och länkar), på dator i raden längst ned.
+    for (const [name, href] of [['Vår historia', '/historia'], ['Kontakt', '/kontakt']]) {
+      const links = within(footer).getAllByRole('link', { name })
+      expect(links.length).toBeGreaterThan(0)
+      for (const link of links) expect(link).toHaveAttribute('href', href)
+    }
     expect(within(footer).getByText(/Designat av/)).toHaveTextContent('Designat av IT Hjälparna Nordic AB')
     expect(within(footer).getByRole('link', { name: 'www.ithjalparna.se' })).toHaveAttribute('href', 'https://www.ithjalparna.se')
     expect(footer).not.toHaveTextContent('fullt utvecklad')
+  })
+
+  it('has the opening hours and then the page links inside the black footer, for phones', async () => {
+    window.history.replaceState(null, '', '/?restaurang=testkrogen')
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => (url.includes('/site-config') ? json(siteConfig()) : json({ items: [] }))))
+
+    renderSite('/meny')
+
+    await screen.findAllByRole('link', { name: 'Meny' })
+    const footer = screen.getByRole('contentinfo')
+    const nav = within(footer).getByRole('navigation', { name: 'Snabblänkar och öppettider' })
+    // Först öppettiderna (ett dragspel), sedan länkarna under dem.
+    expect([...nav.children].map((c) => c.className)).toEqual(['mobile-pre-footer-hours', 'mobile-pre-footer-links'])
+    expect(within(nav).getByRole('button', { name: 'ANAR Restaurang & Bar' })).toHaveAttribute('aria-expanded', 'false')
+    expect(within(nav).getAllByRole('link').map((l) => l.textContent)).toEqual(['Meny', 'Drinkmeny', 'Vår historia', 'Parkering', 'Kontakt'])
   })
 
   it('puts "Drivs av Booqy" last in the panel with the booking flow, not in the footer', async () => {

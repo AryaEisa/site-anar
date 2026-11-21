@@ -7,7 +7,8 @@ const ALLABOLAG_URL =
 
 export const DEVELOPER = 'IT Hjälparna Nordic AB';
 
-export default function Footer() {
+/** children: det som ska stå överst i sidfoten (öppettider och länkar på mobil, MobilePreFooterNav). */
+export default function Footer({ children = null }) {
   const { t } = useLanguage();
   const { config } = useSite();
   const year = new Date().getFullYear();
@@ -16,6 +17,7 @@ export default function Footer() {
 
   return (
     <footer className="site-footer">
+      {children}
       <div className="site-footer-main">
         <a
           className="site-footer-org"
