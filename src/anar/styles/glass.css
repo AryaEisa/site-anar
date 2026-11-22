@@ -1,0 +1,733 @@
+/* Liquid glass: ett lager över hela temat (laddas efter kit.css, före touch.css).
+   Samma recept överallt, så att ytorna hör ihop:
+     1. Genomskinlig, mörktonad fyllning med ett ljusfläck-skimmer uppe till vänster och en
+        varm guldton nere till höger (bara bakgrundslager, inga extra element).
+     2. Bakgrunden bakom suddas och mättas (backdrop-filter), så fotot lyser igenom som färg.
+     3. Kanten är en ljus tunn linje: starkast i överkant (ljuset träffar glaset), svagare i
+        underkant, med en mjuk inre glöd i hörnen.
+     4. Mjuk, bred skugga som lyfter ytan från fotot.
+   Suddningen läggs bara på den yttersta ytan. En yta inuti en annan (steg i panelen,
+   fält, brickor) får fyllning och kant men ingen egen suddning: den ser ändå bara
+   panelens bakgrund, och färre filter är lättare för telefonerna. Kitets höga flödespanel
+   (.kit-panel) har ingen suddning alls, se längre ned. Inre skuggor med suddighet och stora
+   suddiga skuggor används sparsamt: på stora, genomskinliga ytor gör de scrollen seg.
+   Mörkt nog för läsbarhet: fyllningens täckning styrs av --glass-a. */
+
+:root {
+  --glass-a: 0.58;
+  --glass-blur: blur(24px) saturate(1.7) brightness(1.04);
+  --glass-blur-soft: blur(14px) saturate(1.5);
+
+  /* Nivå 1: ytterytor (paneler, kort, header, rullistor) */
+  --glass-1:
+    radial-gradient(140% 100% at 0% 0%, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0) 52%),
+    radial-gradient(120% 90% at 100% 100%, rgba(201, 166, 107, 0.14), rgba(201, 166, 107, 0) 56%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 9%),
+    linear-gradient(160deg, rgba(38, 22, 20, var(--glass-a)), rgba(14, 8, 8, var(--glass-a)));
+  /* Bara hårda kanter: inre skuggor med suddighet på stora ytor gör att sidan ritas om långsamt vid scroll. */
+  --glass-1-rim:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.07),
+    inset 1px 0 0 rgba(255, 255, 255, 0.07),
+    inset -1px 0 0 rgba(255, 255, 255, 0.04);
+  --glass-1-line: rgba(255, 255, 255, 0.13);
+  --glass-1-drop: 0 18px 44px -18px rgba(0, 0, 0, 0.7);
+
+  /* Nivå 2: ytor inuti en panel (steg, brickor, rader) */
+  --glass-2:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03) 55%, rgba(255, 255, 255, 0.055));
+  --glass-2-rim:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  --glass-2-drop: 0 6px 14px -10px rgba(0, 0, 0, 0.5);
+
+  /* Nivå 3: fält och små kontroller (en grunda brunn av glas) */
+  --glass-3: rgba(255, 255, 255, 0.065);
+  --glass-3-hover: rgba(255, 255, 255, 0.11);
+
+  --glass-radius-xl: 28px;
+  --glass-radius-lg: 22px;
+  --glass-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Utan stöd för suddning, eller när gästen har bett om mindre genomskinlighet: nästan täckande. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-a: 0.94;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-a: 0.96;
+    --glass-blur: none;
+    --glass-blur-soft: none;
+  }
+}
+
+/* ---------- Nivå 1: ytterytor ---------- */
+
+.bestall-hem-card,
+.catering-page-panel,
+.dagens-hero-frame,
+.dagens-included,
+.dagens-panel,
+.historia-panel,
+.home-map-inner,
+.kolgrill-hero-frame,
+.kolgrill-panel,
+.kontakt-page-panel,
+.meny-filter,
+.meny-section-card,
+.parking-page-map-block,
+.parking-page-list-section,
+.reviews-panel-card {
+  background: var(--glass-1);
+  border: 1px solid var(--glass-1-line);
+  border-radius: var(--glass-radius-xl);
+  box-shadow: var(--glass-1-rim), var(--glass-1-drop);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* Kitets flödespanel (bokning, beställning, catering, juridik): glas utan egen suddning. Den är hög, och
+   i bokningen ligger ett bord som andas (en ständig animation) inuti den, så en suddning bakom hela
+   panelen räknas om varje bildruta och scrollen blir seg. Fyllningen är i stället lite tätare (0.72),
+   och stegen inuti har sin egen glasyta. */
+.kit-panel {
+  --glass-a: 0.72;
+  background: var(--glass-1);
+  border: 1px solid var(--glass-1-line);
+  border-radius: var(--glass-radius-xl);
+  box-shadow: var(--glass-1-rim), var(--glass-1-drop);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Mindre kort än en hel panel: lite mindre rundning */
+.meny-filter,
+.dagens-included,
+.home-map-inner,
+.parking-page-map-block,
+.parking-page-list-section {
+  border-radius: var(--glass-radius-lg);
+}
+
+/* Telefon: kategoriraden är ett band över hela bredden (meny-page.css), så den har raka sidor */
+@media (max-width: 767px) {
+  .meny-filter {
+    border-radius: 0;
+    border-inline: 0;
+  }
+}
+
+/* Bilden i ramen följer ramens rundning */
+.dagens-hero-frame,
+.kolgrill-hero-frame {
+  overflow: hidden;
+  border-radius: var(--glass-radius-lg);
+}
+
+/* Menyn på telefon som glider upp underifrån */
+.meny-sheet {
+  background: var(--glass-1);
+  border: 1px solid var(--glass-1-line);
+  border-bottom: 0;
+  border-radius: var(--glass-radius-xl) var(--glass-radius-xl) 0 0;
+  box-shadow: var(--glass-1-rim), 0 -18px 50px -18px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* Rullistor, kalender och varukorgslistan (portal i body, så de ser fotot bakom sig) */
+.combo-pop,
+.date-cal,
+.cart-panel {
+  background: var(--glass-1);
+  border: 1px solid var(--glass-1-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--glass-1-rim), 0 22px 56px -16px rgba(0, 0, 0, 0.75);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.combo-option {
+  border-radius: 12px;
+}
+
+.combo-option.is-active,
+.combo-option:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.07));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Öppettiderna i rutan: glas över en mörkare, suddig bakgrund. Kitets tandade kant (mask) är borta. */
+.opening-hours-modal-panel {
+  background: var(--glass-1);
+  border: 1px solid var(--glass-1-line);
+  border-radius: var(--glass-radius-xl);
+  box-shadow: var(--glass-1-rim), 0 28px 70px -20px rgba(0, 0, 0, 0.8);
+  -webkit-mask: none;
+  mask: none;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.opening-hours-modal-backdrop {
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  backdrop-filter: blur(8px) saturate(1.2);
+}
+
+/* ---------- Nivå 2: ytor inuti en panel (ingen egen suddning) ---------- */
+
+.booking-step,
+.order-cart,
+.menu,
+.order-menu,
+.catering-details,
+.booking-confirmation,
+.page-prose,
+.checkout,
+.pay-ticket,
+.printing,
+.booking-summary,
+.checkout-card,
+.floor-wrap,
+.parking-card,
+.catering-offer,
+.bankid-box,
+.glass-panel,
+.notice,
+.order-hint,
+.guarantee-notice,
+.next-up,
+.consent-option,
+.equipment-return .booking-check,
+.catering-dishes li,
+.reviews-panel-badge,
+.offer-ticket {
+  background: var(--glass-2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--glass-radius-lg);
+  box-shadow: var(--glass-2-rim), var(--glass-2-drop);
+}
+
+/* Kitets pappersflik: ingen tandad kant, och inga streckade linjer runt rutor */
+.menu::after,
+.order-menu::after,
+.order-cart::after,
+.booking-step::after,
+.booking-confirmation::after,
+.catering-details::after,
+.page-prose::after,
+.printing::after,
+.checkout::after,
+.pay-ticket::after {
+  display: none;
+}
+
+/* Kitets egna rutor med streckad kant blir glas med hel kant */
+.notice,
+.order-hint,
+.guarantee-notice,
+.next-up,
+.catering-offer,
+.bankid-box,
+.equipment-return .booking-check {
+  border-style: solid;
+}
+
+.notice,
+.order-hint,
+.guarantee-notice,
+.next-up,
+.consent-option,
+.booking-summary-line {
+  border-radius: var(--r-md);
+}
+
+/* Tipsraden under ett fält: en tunn glasremsa med luft runt texten */
+.order-hint {
+  padding: 10px 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+/* Den klistrade kalkylbrickan och varukorgen glider över innehållet: den behöver suddning för att läsas */
+.order-cart,
+.chip-rail,
+.hold-banner {
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+}
+
+.chip-rail {
+  background: linear-gradient(180deg, rgba(30, 18, 16, 0.78), rgba(20, 11, 10, 0.62));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.hold-banner {
+  background: var(--glass-1);
+  border-radius: var(--r-md);
+  box-shadow: var(--glass-1-rim), 0 12px 32px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- Nivå 3: fält och små kontroller ---------- */
+
+.booking-field input,
+.booking-field .combo,
+.booking-field textarea,
+.combo,
+.catering-dishes input,
+.cart-code,
+.cart-code-row input,
+.cart-line-notes input,
+.offer-field input {
+  background: var(--glass-3);
+  border-radius: var(--r-md);
+}
+
+.booking-field input:hover,
+.booking-field .combo:hover,
+.booking-field textarea:hover {
+  background: var(--glass-3-hover);
+}
+
+.party-stepper,
+.segmented,
+.floor-view-toggle,
+.stepper {
+  background: rgba(255, 255, 255, 0.065);
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.party-btn,
+.date-tile,
+.chip,
+.filter-pill,
+.cart-qty button,
+.stepper button {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 6px 14px -8px rgba(0, 0, 0, 0.6);
+  transition: background 0.2s var(--glass-ease), box-shadow 0.2s var(--glass-ease), transform 0.2s var(--glass-ease);
+}
+
+.party-btn {
+  border-radius: 50%;
+}
+
+.date-tile {
+  border-radius: var(--r-lg);
+}
+
+.chip {
+  border-radius: var(--r-pill);
+}
+
+.party-btn:hover:not(:disabled),
+.date-tile:hover:not(:disabled),
+.chip:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
+}
+
+/* Valt datum, vald tid och valda alternativ: guldglas */
+.date-tile.active,
+.chip.active,
+.chip[aria-pressed='true'],
+.filter-pill.active {
+  background: linear-gradient(180deg, #f0dcb1 0%, #c9a66b 52%, #a8812f 100%);
+  color: #1a0a0a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -8px 14px -8px rgba(255, 255, 255, 0.3),
+    0 8px 22px -8px rgba(201, 166, 107, 0.55);
+}
+
+/* Stegens nummer */
+.step-no,
+.flow-no {
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 4px 12px -4px rgba(201, 166, 107, 0.5);
+}
+
+/* ---------- Knappar ---------- */
+
+.btn-primary,
+.btn.primary,
+.offer-submit,
+.btn-secondary,
+.btn {
+  border-radius: var(--r-pill);
+  transition: background 0.2s var(--glass-ease), box-shadow 0.2s var(--glass-ease), transform 0.2s var(--glass-ease), filter 0.2s;
+}
+
+.btn-primary,
+.btn.primary,
+.offer-submit {
+  background: linear-gradient(180deg, #f0dcb1 0%, #c9a66b 52%, #a8812f 100%);
+  color: #1a0a0a;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -10px 16px -10px rgba(255, 255, 255, 0.3),
+    0 10px 26px -10px rgba(201, 166, 107, 0.6);
+}
+
+.btn-primary:hover:not(:disabled),
+.btn.primary:hover:not(:disabled),
+.offer-submit:hover:not(:disabled) {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled,
+.btn.primary:disabled,
+.offer-submit:disabled {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.btn-secondary,
+.btn.ghost {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.06));
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.34), inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 8px 20px -10px rgba(0, 0, 0, 0.6);
+}
+
+.btn-secondary:hover:not(:disabled),
+.btn.ghost:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.09));
+}
+
+/* Beställningsknapparna under headern: guldglas och klart glas */
+.order-bar-cta {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #f0dcb1 0%, #c9a66b 52%, #a8812f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -12px 18px -12px rgba(255, 255, 255, 0.32),
+    0 14px 34px -12px rgba(201, 166, 107, 0.55),
+    0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.order-bar-cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -12px 18px -12px rgba(255, 255, 255, 0.4),
+    0 18px 40px -12px rgba(201, 166, 107, 0.65),
+    0 6px 18px rgba(0, 0, 0, 0.32);
+}
+
+.order-bar-cta--secondary {
+  color: rgba(255, 248, 242, 0.97);
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 55%),
+    rgba(14, 8, 8, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -10px 16px -12px rgba(255, 255, 255, 0.14),
+    0 14px 34px -14px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.order-bar-cta--secondary:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 55%),
+    rgba(14, 8, 8, 0.36);
+}
+
+/* ---------- Header ---------- */
+
+/* Dator: bandet är glas med en ljus underkant */
+@media (min-width: 1074px) {
+  .site-header {
+    background:
+      radial-gradient(90% 220% at 12% 0%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(180deg, rgba(20, 11, 10, 0.46), rgba(8, 4, 4, 0.34));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.07), 0 10px 34px -14px rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .site-header.site-header--stuck {
+    background:
+      radial-gradient(90% 220% at 12% 0%, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(180deg, rgba(22, 12, 11, 0.7), rgba(10, 5, 5, 0.62));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+}
+
+/* Telefon och surfplatta: bandet är genomskinligt, så knapparna i det blir glas */
+.site-header-burger {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 60%),
+    rgba(14, 8, 8, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 10px 26px -12px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+}
+
+.site-header-burger:hover {
+  background:
+    radial-gradient(140% 120% at 0% 0%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 60%),
+    rgba(30, 14, 14, 0.5);
+}
+
+.language-switcher .language-switcher-picker .lang-picker-button {
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  background:
+    radial-gradient(140% 140% at 0% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 60%),
+    rgba(14, 8, 8, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.44), 0 10px 26px -12px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+}
+
+.language-switcher .language-switcher-picker .lang-picker-button:hover:not(:disabled),
+.language-switcher .language-switcher-picker .lang-picker-button:focus-visible,
+.language-switcher .language-switcher-picker .lang-picker-button[aria-expanded='true'] {
+  border-color: rgba(255, 255, 255, 0.6);
+  background:
+    radial-gradient(140% 140% at 0% 0%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 60%),
+    rgba(30, 14, 14, 0.5);
+}
+
+/* Sidomenyn på telefon: glas som glider in från höger */
+.mobile-drawer {
+  background: var(--glass-1);
+  border-left: 1px solid var(--glass-1-line);
+  border-radius: var(--glass-radius-xl) 0 0 var(--glass-radius-xl);
+  box-shadow: var(--glass-1-rim), -18px 0 50px -16px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.mobile-drawer-backdrop {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.mobile-drawer-list a,
+.mobile-drawer-list .mobile-drawer-hours-trigger {
+  border-radius: var(--r-md);
+}
+
+.mobile-drawer-list a:hover,
+.mobile-drawer-list a:focus-visible,
+.mobile-drawer-list .mobile-drawer-hours-trigger:hover,
+.mobile-drawer-list .mobile-drawer-hours-trigger:focus-visible {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.07));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+/* ---------- Sidfot ---------- */
+
+/* Dator: bandet är glas med en ljus överkant. På telefon är sidfoten nästan svart (mobile-pre-footer.css)
+   så att öppettiderna går att läsa. */
+@media (min-width: 801px) {
+  .site-footer {
+    background:
+      radial-gradient(80% 200% at 50% 0%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 60%),
+      linear-gradient(180deg, rgba(14, 8, 8, 0.66), rgba(4, 2, 2, 0.78));
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+}
+
+/* ---------- Recensionerna ---------- */
+
+/* Korten i högen ligger över varandra, så de behåller en nästan täckande glasfyllning */
+.guest-reviews-card {
+  background:
+    radial-gradient(140% 100% at 0% 0%, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(170deg, rgba(34, 20, 18, 0.95), rgba(12, 8, 8, 0.97));
+  border-color: rgba(255, 255, 255, 0.16);
+  border-radius: var(--glass-radius-lg);
+  box-shadow: var(--glass-1-rim), 0 24px 50px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* Brickorna i recensionspanelen (Google, foodora) */
+.reviews-panel-badge {
+  border-radius: var(--r-lg);
+}
+
+.reviews-panel-badge--link:hover {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.06));
+}
+
+/* ---------- Anars egna knappar, fält och småytor ---------- */
+
+/* Guldglas: kartans knapp, kontaktformulärets skicka-knapp och dagens pris */
+.home-map-nav,
+.kontakt-form-submit,
+.dagens-price-tag {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #f0dcb1 0%, #c9a66b 52%, #a8812f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -10px 16px -10px rgba(255, 255, 255, 0.3),
+    0 12px 28px -12px rgba(201, 166, 107, 0.6),
+    0 3px 10px rgba(0, 0, 0, 0.28);
+}
+
+.home-map-nav:hover,
+.kontakt-form-submit:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -10px 16px -10px rgba(255, 255, 255, 0.36),
+    0 16px 34px -12px rgba(201, 166, 107, 0.7),
+    0 5px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Klart glas: knapparna i kortet på Beställ hem och i menyarket */
+.bestall-hem-btn,
+.meny-sheet-close {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background:
+    radial-gradient(140% 140% at 0% 0%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 58%),
+    rgba(14, 8, 8, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36), 0 10px 24px -12px rgba(0, 0, 0, 0.65);
+}
+
+.bestall-hem-btn:hover,
+.meny-sheet-close:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background:
+    radial-gradient(140% 140% at 0% 0%, rgba(255, 255, 255, 0.27), rgba(255, 255, 255, 0) 58%),
+    rgba(14, 8, 8, 0.34);
+}
+
+/* "Öppna i appen" är den ifyllda knappen: guldglas */
+.bestall-hem-btn--accent,
+.bestall-hem-btn--accent:hover {
+  color: #1a0a0a;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #f0dcb1 0%, #c9a66b 52%, #a8812f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -10px 16px -10px rgba(255, 255, 255, 0.3),
+    0 12px 28px -12px rgba(201, 166, 107, 0.6);
+}
+
+/* Meny: kategorival (dator) och alternativen i arket (telefon) */
+.meny-filter-btn,
+.meny-sheet-option {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.meny-filter-btn:hover,
+.meny-sheet-option:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.07));
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.meny-filter-btn--active,
+.meny-sheet-option--active {
+  color: #1a0a0a;
+  border-color: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, #f0dcb1 0%, #c9a66b 52%, #a8812f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -8px 14px -8px rgba(255, 255, 255, 0.28),
+    0 8px 20px -10px rgba(201, 166, 107, 0.55);
+}
+
+.meny-filter-open {
+  border-radius: var(--r-lg);
+}
+
+/* Kontaktformulärets fält */
+.kontakt-form-input,
+.kontakt-form-select,
+.kontakt-form-textarea {
+  border-radius: var(--r-md);
+  background: var(--glass-3);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.kontakt-form-input:hover,
+.kontakt-form-select:hover,
+.kontakt-form-textarea:hover {
+  background: var(--glass-3-hover);
+}
+
+/* Foton, kartan och små märken */
+.dish-photo {
+  border-radius: 14px;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 10px 24px -12px rgba(0, 0, 0, 0.7);
+}
+
+.home-map-frame,
+.parking-map-frame {
+  border-radius: var(--r-lg);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+}
+
+.parking-leaflet {
+  border-radius: var(--r-lg);
+}
+
+.parking-page-distance,
+.parking-distance {
+  border-radius: 999px;
+}
+
+.reviews-panel-badge-logo {
+  border-radius: 8px;
+}
+
+/* Öppettiderna (rutan på dator, listorna på telefon): rundade glasrutor med ett ljusare huvud */
+.opening-hours-section {
+  border-radius: var(--r-lg);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.opening-hours--header-modal .opening-hours-section-title {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.05));
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.opening-hours-modal-close {
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 6px 14px -8px rgba(0, 0, 0, 0.6);
+}
+
+.site-header-dropdown-trigger,
+.site-header-nav a {
+  border-radius: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .party-btn,
+  .date-tile,
+  .chip,
+  .filter-pill,
+  .btn-primary,
+  .btn-secondary,
+  .btn {
+    transition: none;
+  }
+}
