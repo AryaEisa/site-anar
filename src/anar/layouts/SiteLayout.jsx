@@ -20,6 +20,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { installBookingFlow } from '../kitBridge/bookingFlow';
 import { installPlanLabels } from '../kitBridge/planLabels';
 import { installPlanLens } from '../kitBridge/planLens';
+import { installPlanText } from '../kitBridge/planText';
 import { installPlanZoom } from '../kitBridge/planZoom';
 import { installTableMode } from '../kitBridge/tableMode';
 import { installTableWarning } from '../kitBridge/tableWarning';
@@ -55,6 +56,7 @@ export default function SiteLayout() {
       installTableWarning(),
       installPlanLens(),
       installPlanZoom(),
+      installPlanText(),
     ];
     return () => stops.forEach((stop) => stop());
   }, [location.locationId]);

@@ -1,0 +1,118 @@
+/* Läsbar text i bokningens planritning (2D och 3D): bordsnummer och antal platser, för alla och för den som ser dåligt.
+   Kitet ritar 2D-texten i planens egna enheter (meter): numret 0,3 och platserna 0,18. På en telefon är en meter 16 px,
+   så numret blev ca 5 px och platserna 3 px. Här är storleken det största av "som kitet, men större" och en minsta
+   storlek på skärmen: nummer 15 px och platser 11 px (src/anar/kitBridge/planText.ts mäter --plan-k, skärmpixlar per
+   enhet). En ljus eller mörk kant runt bokstäverna gör att de syns även när de är större än bordet. De mörka borden
+   (går inte att boka) hade texten halvgenomskinlig, 5,4 till 1 i kontrast; nu full styrka. */
+
+.floor-svg {
+  --plan-lab: max(0.5px, calc(15px / var(--plan-k, 40)));
+  --plan-sea: max(0.27px, calc(11px / var(--plan-k, 40)));
+  --plan-gap: calc(var(--plan-sea) * 0.12);
+}
+
+/* Numret och platserna bildar ett block mitt på bordet: kitet sätter dem 0,12 över och 0,22 under mitten, vilket bara
+   stämmer för dess egen storlek, så de flyttas efter hur stora de är. */
+.floor-svg-table-label {
+  font-size: var(--plan-lab);
+  font-weight: 800;
+  translate: 0 calc(0.12px - (var(--plan-gap) + var(--plan-sea)) / 2);
+  paint-order: stroke;
+  stroke-linejoin: round;
+  stroke-width: calc(var(--plan-lab) * 0.22);
+  stroke: #0a0606;
+}
+
+.floor-svg-table-seats {
+  font-size: var(--plan-sea);
+  font-weight: 700;
+  translate: 0 calc((var(--plan-lab) + var(--plan-gap)) / 2 - 0.22px);
+  paint-order: stroke;
+  stroke-linejoin: round;
+  stroke-width: calc(var(--plan-sea) * 0.26);
+  stroke: #0a0606;
+}
+
+/* Lediga bord: mörk text, och kanten har bordets färg (osynlig på bordet, en ljus ram där texten går utanför). */
+.floor-svg-table.is-free ~ .floor-svg-table-label,
+.floor-svg-table.is-free ~ .floor-svg-table-seats {
+  stroke: var(--seat-free);
+}
+
+.floor-svg-table.is-free ~ .floor-svg-table-seats {
+  fill: var(--seat-free-ink);
+}
+
+/* Valt bord (grönt). */
+.floor-svg-table.is-selected ~ .floor-svg-table-label,
+.floor-svg-table.is-selected ~ .floor-svg-table-seats {
+  stroke: var(--seat-pick);
+}
+
+/* Bord som inte går att boka: ljus text i full styrka (kitet har den halvgenomskinlig). */
+.floor-svg-table.is-unfit ~ .floor-svg-table-label,
+.floor-svg-table.is-unfit ~ .floor-svg-table-seats {
+  opacity: 1;
+}
+
+.floor-svg-table.is-unfit ~ .floor-svg-table-label,
+.floor-svg-table.is-booked ~ .floor-svg-table-label,
+.floor-svg-table.is-blocked ~ .floor-svg-table-label,
+.floor-svg-table.is-taken ~ .floor-svg-table-label {
+  fill: #f6ece9;
+}
+
+.floor-svg-table.is-unfit ~ .floor-svg-table-seats,
+.floor-svg-table.is-booked ~ .floor-svg-table-seats,
+.floor-svg-table.is-blocked ~ .floor-svg-table-seats,
+.floor-svg-table.is-taken ~ .floor-svg-table-seats {
+  fill: #e4dad0;
+}
+
+/* 3D: texten står i en liten bricka över bordet och skalas med planen (--zoom), så på en telefon blev den ca 4 px. Här är
+   storleken en minsta storlek på skärmen (nummer 14 px, platser 11 px) delat med skalan. Bord som inte går att boka har en
+   mörk bricka med ljus text i full styrka (kitet har dem halvgenomskinliga).
+   På en telefon är 3D-planen så liten (skalan ca 0,3) att brickorna hamnar på varandra: under skalan 0,45 göms raden med
+   platser (den står kvar i listan, i 2D-planen och i bordets beskrivning för skärmläsare) och numret blir kvar. */
+.f3d-table-label {
+  font-size: calc(14px / max(var(--zoom, 1), 0.3));
+  font-weight: 800;
+}
+
+.f3d-table-seats {
+  font-size: clamp(0px, calc((var(--zoom, 1) - 0.45) * 1000px), calc(11px / max(var(--zoom, 1), 0.3)));
+  font-weight: 700;
+}
+
+/* Bord som inte går att boka (kitet lägger filter: saturate(.3) på bordsytan): ett filter gör att etiketten inte kan stå upp
+   mot kameran, den låg platt och sned på bordet. Färgen är redan avdämpad, så filtret behövs inte. */
+.f3d-table.is-unfit .f3d-table-top {
+  filter: none;
+}
+
+.f3d-table.is-unfit .f3d-table-label-wrap {
+  opacity: 1;
+}
+
+/* Valt bord: en grön bricka med mörk text, som de lediga borden har en ljus. Kitet ger det valda bordet ingen bricka, och
+   då stod den mörkgröna texten rakt mot den svarta scenen (kontrast 1,2 till 1, i princip osynlig). Med brickan 8,1 till 1. */
+.f3d-table.is-selected .f3d-table-label-wrap {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--seat-pick);
+  box-shadow:
+    0 0 0 2px var(--seat-pick-line),
+    0 2px 6px rgba(0, 0, 0, 0.55);
+}
+
+.f3d-table:not(.is-free):not(.is-selected) .f3d-table-label-wrap {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(14, 9, 8, 0.94);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.f3d-table:not(.is-free):not(.is-selected) .f3d-table-label,
+.f3d-table:not(.is-free):not(.is-selected) .f3d-table-seats {
+  color: #f6ece9;
+}
