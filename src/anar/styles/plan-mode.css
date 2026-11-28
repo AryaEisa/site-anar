@@ -1,4 +1,4 @@
-/* Valet i steg 3: "Välj bord själv" eller "Spelar ingen roll" (src/anar/kitBridge/tableMode.ts). */
+/* Valet i steg 3: "Automatiskt vald" eller "Välj bord själv" (src/anar/kitBridge/tableMode.ts). */
 
 .plan-mode {
   display: grid;
@@ -37,8 +37,18 @@
   opacity: 0.78;
 }
 
-/* "Spelar ingen roll": planen, förklaringen och listan göms, kvar blir valet, kitets egna meddelanden och
+/* "Automatiskt vald": planen, förklaringen och listan göms, kvar blir valet, kitets egna meddelanden och
    "Ditt val" med Bekräfta bord. Byter gästen tillbaka till "Välj bord själv" syns allt igen. */
 .booking-step[data-table-mode='any'] > :not(legend):not(.plan-mode):not(.booking-confirm-tables):not(.notice) {
   display: none;
+}
+
+/* Det valda bordet i listan är grönt, som det valda bordet i planen (--seat-pick i kit.css). De lediga borden är guld. */
+.booking-table-list .filter-pill.active {
+  background: linear-gradient(180deg, #b4e8c6 0%, #6fc58b 52%, #3f9a63 100%);
+  color: #06210e;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -8px 14px -8px rgba(255, 255, 255, 0.3),
+    0 8px 22px -8px rgba(111, 197, 139, 0.55);
 }

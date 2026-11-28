@@ -1,19 +1,22 @@
 /**
- * Steg 3 i bokningen, "Välj ert bord": ett val mellan "Välj bord själv" (planritningen och listan, som förut) och
- * "Spelar ingen roll" (sajten väljer ett bord åt gästen).
+ * Steg 3 i bokningen, "Välj ert bord": ett val mellan "Automatiskt vald" (sajten väljer ett bord åt gästen) och "Välj
+ * bord själv" (planritningen och listan, som förut). Knapparna står i den ordningen och ingen är vald från början.
  *
- * Kitet har inget sådant val, så den här modulen sätter in två knappar överst i steg 3 och, i läget "Spelar ingen roll",
+ * Kitet har inget sådant val, så den här modulen sätter in två knappar överst i steg 3 och, i läget "Automatiskt vald",
  * trycker på en av kitets egna bordsknappar (`.booking-table-list`, en knapp per bord eller bordskombination som går att
  * boka för sällskapet). Då tar kitets vanliga flöde vid: "Ditt val", "Bekräfta bord", hållning av bordet. Planritningen
- * och listan göms så länge läget är "Spelar ingen roll" (CSS, plan-mode.css); byter gästen tillbaka syns de igen med
- * det valda bordet markerat.
+ * och listan göms så länge läget är "Automatiskt vald" (CSS, plan-mode.css); byter gästen tillbaka syns de igen med
+ * det valda bordet markerat. Ett klick på en av knapparna rullar sidan vidare till bordsdelen (bookingFlow.ts).
+ *
+ * Planritningen och listan är synliga redan innan gästen valt: väljer gästen ett bord direkt räknas det som "Välj bord
+ * själv". (De delade e2e-testerna väljer bord direkt efter tiden, så planen får inte döljas bakom en knapp.)
  *
  * Vilket bord: ett enda bord framför bord som ställs ihop, och bland dem det med minst platser som ändå räcker (så ett
  * sällskap på två inte får ett bord för åtta); finns flera lika bra väljs ett slumpmässigt. Antal platser kommer från
  * planritningen i backenden (bordets id finns i knappens `data-option`), inte från knappens text, som kitet översätter.
  *
  * Gästens val kommer ihåg tills sidan laddas om (inget sparas i webbläsaren). Byter gästen dag, tid eller sällskap
- * nollställer kitet bordsvalet, och i läget "Spelar ingen roll" väljs ett nytt bord direkt.
+ * nollställer kitet bordsvalet, och i läget "Automatiskt vald" väljs ett nytt bord direkt.
  *
  * Tas bort när kitet har ett eget val för "valfritt bord".
  */
@@ -28,10 +31,11 @@ export interface Candidate {
 }
 
 const LIST = '.booking-table-list'
-let mode: TableMode = 'self'
+/** Gästens val, eller null så länge hen inte valt. */
+let mode: TableMode | null = null
 
-export const getTableMode = (): TableMode => mode
-export function setTableMode(next: TableMode): void {
+export const getTableMode = (): TableMode | null => mode
+export function setTableMode(next: TableMode | null): void {
   mode = next
 }
 
@@ -67,8 +71,8 @@ function setAttr(el: Element, name: string, value: string): void {
 }
 
 const OPTIONS: { mode: TableMode; title: string; sub: string }[] = [
+  { mode: 'any', title: 'Automatiskt vald', sub: 'Vi väljer ett bord åt er' },
   { mode: 'self', title: 'Välj bord själv', sub: 'Tryck på ett bord i planen' },
-  { mode: 'any', title: 'Spelar ingen roll', sub: 'Vi väljer ett bord åt er' },
 ]
 
 function buildSwitch(): HTMLElement {
@@ -97,14 +101,17 @@ function buildSwitch(): HTMLElement {
 let nextPickAt = 0
 const PICK_GAP_MS = 250
 
-/** Tillbaka till början (för testerna): "Välj bord själv" och ingen väntetid. */
+/** Tillbaka till början (för testerna): inget val gjort och ingen väntetid. */
 export function resetTableMode(): void {
-  mode = 'self'
+  mode = null
   nextPickAt = 0
 }
 
+/** Sant medan sajten själv trycker på en bordsknapp (det är inte gästens eget val av bord). */
+let autoClicking = false
+
 /**
- * Ser till att varje steg 3 har sitt val och, i läget "Spelar ingen roll", ett valt bord. Säker att köra många gånger.
+ * Ser till att varje steg 3 har sitt val och, i läget "Automatiskt vald", ett valt bord. Säker att köra många gånger.
  * Returnerar true om en ny körning behövs strax (ett val gjordes nyss, eller antalet platser hämtas).
  */
 export function syncTableMode(
@@ -149,15 +156,23 @@ export function syncTableMode(
     const best = chooseCandidate(candidates, seatsOf, random)
     if (best) {
       nextPickAt = now + PICK_GAP_MS
-      best.chip.click()
+      autoClicking = true
+      try {
+        best.chip.click()
+      } finally {
+        autoClicking = false
+      }
       again = true
     }
   }
   return again
 }
 
-/** Sätter igång: knapparna i steg 3 och valet av bord. Returnerar en funktion som stänger av det. */
-export function installTableMode(locationId: string): () => void {
+/**
+ * Sätter igång: knapparna i steg 3 och valet av bord. `onChoose` anropas när gästen klickar på en av knapparna (efter att
+ * sidan ritats om efter valet), för att rulla vidare till bordsdelen. Returnerar en funktion som stänger av det.
+ */
+export function installTableMode(locationId: string, onChoose?: (chosen: TableMode) => void): () => void {
   if (typeof window === 'undefined') return () => {}
   let stopped = false
   let frame = 0
@@ -187,10 +202,20 @@ export function installTableMode(locationId: string): () => void {
   }
 
   const onClick = (e: MouseEvent) => {
-    const button = (e.target as Element | null)?.closest<HTMLElement>('.plan-mode-option')
+    const target = e.target as Element | null
+    const button = target?.closest<HTMLElement>('.plan-mode-option')
     const next = button?.dataset.tableMode
     if (next === 'self' || next === 'any') {
       mode = next
+      // Direkt, så att knapparna och planen visar valet innan sidan rullar.
+      syncTableMode(seats)
+      schedule()
+      onChoose?.(next)
+      return
+    }
+    // Väljer gästen ett bord direkt, utan knapparna, är det "Välj bord själv".
+    if (mode === null && !autoClicking && target?.closest('.booking-table-list button[data-option], .f3d-pick, .floor-svg-pick')) {
+      mode = 'self'
       schedule()
     }
   }

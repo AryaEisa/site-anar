@@ -17,10 +17,12 @@ import LegalPopups from '../components/LegalPopups';
 import MobilePreFooterNav from '../components/MobilePreFooterNav';
 import Seo from '../components/Seo';
 import { useLanguage } from '../i18n/LanguageContext';
+import { installBookingFlow } from '../kitBridge/bookingFlow';
 import { installPlanLabels } from '../kitBridge/planLabels';
 import { installPlanLens } from '../kitBridge/planLens';
 import { installPlanZoom } from '../kitBridge/planZoom';
 import { installTableMode } from '../kitBridge/tableMode';
+import { installTableWarning } from '../kitBridge/tableWarning';
 
 // Meny, Catering/Kolgrill och Parkering har en liggande och en stående version var (data/backgrounds.js). Startsidan
 // (GIF:en), Kontakt, Vår historia och Beställ hem har en enda bild var, som täcker skärmen (cover).
@@ -41,10 +43,19 @@ export default function SiteLayout() {
   const { t } = useLanguage();
   // Anars namn översätts aldrig, inte heller i sidtitlar, kartan och beskrivningar.
   useKeepTerms([t('meta.brand'), 'ANAR', 'Anar']);
-  // Sajtens tillägg till bokningens planritning (kitBridge): namn på dörrar och fönster från backenden, valet
-  // "Välj bord själv" eller "Spelar ingen roll", ett förstoringsglas för musen och zoomknappar för mobil.
+  // Sajtens tillägg till bokningen (kitBridge): rullning mellan delarna, namn på dörrar och fönster från backenden, valet
+  // "Automatiskt vald" eller "Välj bord själv", tydlig varning för bord som inte går att boka, ett förstoringsglas för
+  // musen och zoomknappar för mobil.
   useEffect(() => {
-    const stops = [installPlanLabels(location.locationId), installTableMode(location.locationId), installPlanLens(), installPlanZoom()];
+    const flow = installBookingFlow();
+    const stops = [
+      flow.stop,
+      installPlanLabels(location.locationId),
+      installTableMode(location.locationId, () => flow.advance('mode')),
+      installTableWarning(),
+      installPlanLens(),
+      installPlanZoom(),
+    ];
     return () => stops.forEach((stop) => stop());
   }, [location.locationId]);
   // Besöksstatistik utan cookies, bara med marknadsföring i planen.

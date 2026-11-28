@@ -43,11 +43,12 @@
   --seat-free-line: #c9a66b;
   --seat-free-side: #9a7d4c;
   --seat-glow: rgba(232, 190, 110, 0.6);
-  --seat-ring: #e8c98a;
-  --seat-pick: #c9a66b;
-  --seat-pick-line: #f0d9a8;
-  --seat-pick-side: #8a6834;
-  --seat-pick-ink: #1a0a0a;
+  /* Valt bord: grönt (guld är de lediga borden). Ringen är klickeffekten när bordet väljs. */
+  --seat-ring: #8fd6a7;
+  --seat-pick: #6fc58b;
+  --seat-pick-line: #c9f2d6;
+  --seat-pick-side: #2f7a4c;
+  --seat-pick-ink: #06210e;
   --seat-taken: #6b2925;
   --seat-taken-line: #b0574d;
   --seat-taken-side: #4a1c19;
