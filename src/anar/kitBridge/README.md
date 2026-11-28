@@ -30,18 +30,20 @@ and names nothing when the counts differ. When site-kit names doors and
 windows itself, delete `planLabels.ts`, its test, `plan-labels.css` and the
 `installPlanLabels` call in `SiteLayout.jsx`.
 
-## Third to fifth bridge: "Spelar ingen roll", the magnifying lens and the zoom buttons
+## Third to ninth bridge: the table choice, the magnifying lens, the zoom buttons, the booking sections, the warning and the plan text
 
 Both work on booking step 3 ("Välj ert bord") and are installed together with
 `planLabels.ts` from `SiteLayout.jsx`. `layoutData.ts` fetches the layout once
 per location for all of them.
 
 - `tableMode.ts` (+ `plan-mode.css`): two choices at the top of step 3,
-  "Välj bord själv" and "Spelar ingen roll". In the second the bridge presses
-  one of the kit's table buttons (a single table with the fewest seats that fit,
-  random among equals), and the plan and the list are hidden until the guest
-  switches back. It needs `fieldset.booking-step`, `.booking-table-list` and
-  the `data-option` on its buttons.
+  "Automatiskt vald" (first) and "Välj bord själv", none chosen at first. In the
+  first the bridge presses one of the kit's table buttons (a single table with
+  the fewest seats that fit, random among equals), and the plan and the list
+  are hidden until the guest switches back. The plan stays visible before any
+  choice (the shared e2e tests pick a table right after the time). It needs
+  `fieldset.booking-step`, `.booking-table-list` and the `data-option` on its
+  buttons.
 - `planLens.ts` (+ `plan-lens.css`): a round lens that follows the mouse over the
   2D or 3D plan and shows a 2.2 times larger copy of it. Mouse only. It needs
   `.f3d-scene` and `.floor-svg-frame`.
@@ -54,3 +56,17 @@ per location for all of them.
 
 When site-kit has its own "any table" choice, magnifier and zoom, delete the
 modules, their tests, the CSS files and the calls in `SiteLayout.jsx`.
+
+- `bookingFlow.ts`: the booking goes section by section. A click on a date or on
+  plus and minus for the number of people rolls the page to "Välj tid", a click
+  on a time rolls to "Välj ert bord", and "Välj bord själv" rolls to the plan.
+  It uses `src/anar/lib/stepGuide.ts` (the same engine as the catering form).
+  It finds the parts by the number in the heading (`.step-no`), and needs
+  `form.booking`, `.date-tile`, `.party-btn` and `.booking-times`.
+- `tableWarning.ts` (+ `plan-warning.css`): a table that cannot be booked gives
+  an amber warning with a triangle and the line "Välj ett bord som lyser." after
+  the kit's own reason (`p.table-info`), rolled into view if it is off screen.
+- `planText.ts` (+ `plan-text.css`): readable table numbers and seats in the 2D plan, also for low vision. It measures the screen
+  pixels per unit of each plan (`--plan-k` on the SVG) so that the CSS can give the text a minimum size on the screen (number
+  15 px, seats 11 px) however small the plan is drawn. The CSS also covers the 3D labels. It needs `.floor-svg` and the
+  kit's classes `.floor-svg-table-label`, `.floor-svg-table-seats` and `.f3d-table-label`.
