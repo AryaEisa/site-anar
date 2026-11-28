@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { glideTo } from './glide'
+import { glideTo } from '../lib/glide'
 import { DELAYS, QUICK_DELAY } from './guidedFlow'
 import type { StepId, TargetId } from './guidedFlow'
 import { useGuidedScroll } from './useGuidedScroll'
 
-vi.mock('./glide', () => ({ glideTo: vi.fn(async () => true) }))
+vi.mock('../lib/glide', () => ({ glideTo: vi.fn(async () => true) }))
 const glide = vi.mocked(glideTo)
 
 const NONE: Record<StepId, boolean> = { guests: false, parts: false, dishes: false, when: false, details: false }
@@ -121,6 +121,20 @@ describe('keeps out of the way', () => {
     act(() => result.current.touch('guests'))
     wait(500)
     window.dispatchEvent(new Event('wheel'))
+    wait(DELAYS.guests)
+    expect(glide).not.toHaveBeenCalled()
+    // en ny ändring efteråt får sidan gå vidare som vanligt
+    wait(10)
+    act(() => result.current.touch('guests'))
+    wait(DELAYS.guests)
+    expect(glide).toHaveBeenCalledOnce()
+  })
+
+  it('stays where it is when the guest taps something else after the change (they have gone on themselves)', () => {
+    const { result } = setup({ guests: true })
+    act(() => result.current.touch('guests'))
+    wait(300)
+    window.dispatchEvent(new Event('pointerdown'))
     wait(DELAYS.guests)
     expect(glide).not.toHaveBeenCalled()
     // en ny ändring efteråt får sidan gå vidare som vanligt

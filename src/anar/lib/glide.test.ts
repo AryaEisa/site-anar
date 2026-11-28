@@ -59,6 +59,29 @@ describe('glideTo', () => {
   })
 })
 
+describe('glideTo with block nearest', () => {
+  it('does nothing when the element is already in view', async () => {
+    expect(await glideTo(elementAt(200, 100), { block: 'nearest' })).toBe(false)
+    expect(scrollTo).not.toHaveBeenCalled()
+  })
+
+  it('scrolls just enough to show an element that is below the fold', async () => {
+    // fönstret är 800 högt: underkanten (900 + 100) ska hamna OFFSET_PX över fönstrets nederkant
+    await glideTo(elementAt(900, 100), { block: 'nearest' })
+    expect(scrollTo).toHaveBeenCalledWith({ top: 100 + (1000 - (800 - OFFSET_PX)), behavior: 'instant' })
+  })
+
+  it('shows a tall element from its top rather than scrolling its top out of the window', async () => {
+    await glideTo(elementAt(500, 900), { block: 'nearest' })
+    expect(scrollTo).toHaveBeenCalledWith({ top: 100 + (500 - OFFSET_PX), behavior: 'instant' })
+  })
+
+  it('scrolls up to an element that is above the window', async () => {
+    await glideTo(elementAt(-60, 100), { block: 'nearest' })
+    expect(scrollTo).toHaveBeenCalledWith({ top: 100 + (-60 - OFFSET_PX), behavior: 'instant' })
+  })
+})
+
 describe('glideTo with motion', () => {
   beforeEach(() => {
     window.matchMedia = vi.fn().mockReturnValue({ matches: false }) as unknown as typeof window.matchMedia

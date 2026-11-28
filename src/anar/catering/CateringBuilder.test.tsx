@@ -5,11 +5,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { SiteProvider, cateringApi, configureSiteKit } from '@bookingsystemadvancedorg/site-kit'
 import { LOCATION_ID, json, siteConfig } from '@bookingsystemadvancedorg/site-kit/testing'
 import CateringBuilder from './CateringBuilder'
-import { glideTo } from './glide'
+import { glideTo } from '../lib/glide'
 import { ESTIMATE_NOTE } from './selection'
 
 // Sidan rullas inte på riktigt i testerna: glide.ts har egna tester, här kontrolleras vart sidan skulle rulla.
-vi.mock('./glide', () => ({ glideTo: vi.fn(async () => true) }))
+vi.mock('../lib/glide', () => ({ glideTo: vi.fn(async () => true) }))
 const glide = vi.mocked(glideTo)
 
 const settings = {

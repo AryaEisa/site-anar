@@ -1,5 +1,6 @@
 /**
- * Mjuk rullning till ett element, för cateringformulärets "gå vidare till nästa steg" (guidedFlow.ts).
+ * Mjuk rullning till ett element, för att gå vidare till nästa steg i formulär (cateringformuläret, guidedFlow.ts, och
+ * bokningen, kitBridge/bookingFlow.ts).
  *
  * Kitet har en egen (glideTo i bokningen) men exporterar den inte, så här är en liten motsvarighet med samma idé:
  * egen easing i stället för webbläsarens `scrollIntoView({ behavior: 'smooth' })`, som i vissa webbläsare hoppar på en
@@ -36,13 +37,21 @@ export interface GlideOptions {
   duration?: number
   /** Rulla inte om elementet redan är i stort sett synligt (en klistrad kolumn som Kalkylen behöver ingen rullning). */
   skipIfInView?: boolean
+  /**
+   * `start` (standard): elementets överkant hamnar högst upp. `nearest`: rulla bara så mycket som behövs för att
+   * elementet ska synas, och inte alls om det redan syns (en varning under planritningen).
+   */
+  block?: 'start' | 'nearest'
 }
 
 /**
- * Rullar så att `el` hamnar högst upp. Löser sig med true när rullningen kom fram, false när den avbröts av gästen eller
- * inte behövdes.
+ * Rullar så att `el` hamnar högst upp (eller, med block 'nearest', så att det syns). Löser sig med true när rullningen
+ * kom fram, false när den avbröts av gästen eller inte behövdes.
  */
-export function glideTo(el: HTMLElement | null | undefined, { duration = 650, skipIfInView = false }: GlideOptions = {}): Promise<boolean> {
+export function glideTo(
+  el: HTMLElement | null | undefined,
+  { duration = 650, skipIfInView = false, block = 'start' }: GlideOptions = {},
+): Promise<boolean> {
   if (!el || typeof window === 'undefined') return Promise.resolve(false)
   stopActive?.()
   if (skipIfInView && mostlyInView(el)) return Promise.resolve(false)
@@ -50,7 +59,15 @@ export function glideTo(el: HTMLElement | null | undefined, { duration = 650, sk
   const root = (document.scrollingElement ?? document.documentElement) as HTMLElement
   const from = window.scrollY
   const max = Math.max(0, root.scrollHeight - window.innerHeight)
-  const to = Math.max(0, Math.min(max, from + el.getBoundingClientRect().top - OFFSET_PX))
+  const rect = el.getBoundingClientRect()
+  let delta = rect.top - OFFSET_PX
+  if (block === 'nearest') {
+    if (rect.top >= OFFSET_PX && rect.bottom <= window.innerHeight - OFFSET_PX) delta = 0
+    else if (rect.top < OFFSET_PX) delta = rect.top - OFFSET_PX
+    // Underkanten ska synas, men överkanten får inte hamna ovanför fönstret (ett högt element visas från sin överkant).
+    else delta = Math.min(rect.bottom - (window.innerHeight - OFFSET_PX), rect.top - OFFSET_PX)
+  }
+  const to = Math.max(0, Math.min(max, from + delta))
   if (Math.abs(to - from) < 1) return Promise.resolve(false)
 
   const jump = (top: number) => window.scrollTo({ top, behavior: 'instant' as ScrollBehavior })
