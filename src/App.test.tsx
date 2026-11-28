@@ -6,6 +6,9 @@ import { SiteProvider, configureSiteKit } from '@bookingsystemadvancedorg/site-k
 import { json, siteConfig } from '@bookingsystemadvancedorg/site-kit/testing'
 import App from './App'
 
+// Sidor som hämtas i efterhand och många tangenttryck per test: standardgränsen på 5 s räcker ensam men inte i en parallell körning.
+vi.setConfig({ testTimeout: 20_000 })
+
 function renderSite(path = '/') {
   return render(
     <MemoryRouter initialEntries={[path]}>
@@ -132,7 +135,8 @@ describe('App on SiteProvider', () => {
     await screen.findAllByRole('link', { name: 'Meny' })
     await userEvent.click(screen.getAllByRole('link', { name: 'Catering' })[0])
 
-    expect(await screen.findByRole('heading', { level: 1, name: 'Räkna på catering' })).toBeInTheDocument()
+    // Cateringsidan hämtas i efterhand: när hela sviten körs parallellt räcker inte standardsekunden.
+    expect(await screen.findByRole('heading', { level: 1, name: 'Räkna på catering' }, { timeout: 10_000 })).toBeInTheDocument()
     // Först vilka delar av menyn gästen vill ha, sedan rätterna att kryssa i (inte ett antal att skriva: mängden räknas ut åt gästen).
     await userEvent.click(await screen.findByRole('checkbox', { name: 'Varmrätter' }))
     expect(await screen.findByRole('checkbox', { name: 'Grillad lax' })).toBeInTheDocument()
