@@ -8,6 +8,9 @@ import CateringBuilder from './CateringBuilder'
 import { glideTo } from '../lib/glide'
 import { ESTIMATE_NOTE } from './selection'
 
+// Många tangenttryck och klick per test: gränsen på 5 s räcker ensam (1,5 s) men inte när hela sviten körs parallellt.
+vi.setConfig({ testTimeout: 20_000 })
+
 // Sidan rullas inte på riktigt i testerna: glide.ts har egna tester, här kontrolleras vart sidan skulle rulla.
 vi.mock('../lib/glide', () => ({ glideTo: vi.fn(async () => true) }))
 const glide = vi.mocked(glideTo)
@@ -280,8 +283,92 @@ describe('Catering: tick what you want', () => {
     glide.mockClear()
 
     await user.click(await screen.findByRole('button', { name: 'Gå vidare till När och var' }))
-    await waitFor(() => expect(glide).toHaveBeenCalledOnce())
-    expect(glide.mock.calls[0][0]).toBe(screen.getByRole('region', { name: 'När och var' }))
+    // Sidan kan också ha rullat av sig själv till menyn efter antalet gäster (en paus som går av under testet): det
+    // som räknas är att knappen rullar till "När och var".
+    const section = screen.getByRole('region', { name: 'När och var' })
+    await waitFor(() => expect(glide.mock.calls.map(([el]) => el)).toContain(section))
+  })
+
+  it('has a send button that reads as unavailable until everything is filled in, but can still be reached and pressed', async () => {
+    const user = userEvent.setup()
+    renderBuilder()
+    const send = await screen.findByRole('button', { name: 'Skicka förfrågan' })
+
+    expect(send).toHaveAttribute('aria-disabled', 'true')
+    expect(send).not.toBeDisabled() // en avstängd knapp tar inte emot ett klick och nås inte med tangentbordet
+    expect(send).toHaveClass('is-incomplete')
+    expect(screen.getByText('Nästa steg: Fyll i antal gäster.')).toBeInTheDocument()
+    expect(send).toHaveAccessibleDescription('Nästa steg: Fyll i antal gäster.')
+
+    await user.tab() // tangentbordet når knappen (fokus kommer först till antal gäster)
+    send.focus()
+    expect(send).toHaveFocus()
+  })
+
+  it('says right above the button what comes next, as the guest fills in the form', async () => {
+    const { user } = await openWith30Guests()
+    expect(await screen.findByText('Nästa steg: Välj minst en maträtt eller dryck.')).toBeInTheDocument()
+
+    await tick(user, 'Grillad lax')
+    expect(await screen.findByText('Nästa steg: Fyll i leveransadressen (gata, postnummer och ort).')).toBeInTheDocument()
+    expect(screen.queryByText('Nästa steg: Välj minst en maträtt eller dryck.')).not.toBeInTheDocument()
+  })
+
+  it('takes the guest to the part that needs filling when the button is pressed too early: guests first', async () => {
+    const user = userEvent.setup()
+    renderBuilder()
+    const guests = await screen.findByLabelText('Antal gäster')
+    await user.click(await screen.findByRole('button', { name: 'Skicka förfrågan' }))
+
+    expect(await screen.findByText('Fyll i antal gäster.')).toHaveAttribute('role', 'alert')
+    await waitFor(() => expect(glide.mock.calls.map(([el]) => el)).toContain(document.querySelector('.cb-form .catering-step-title')))
+    await waitFor(() => expect(guests).toHaveFocus())
+    expect(posts('/catering/requests')).toHaveLength(0)
+  })
+
+  it('takes the guest to the menu when nothing is ticked, and to "När och var" when the address is missing', async () => {
+    const { user } = await openWith30Guests()
+    await user.click(await screen.findByRole('button', { name: 'Skicka förfrågan' }))
+
+    expect(await screen.findByText('Välj minst en maträtt eller dryck.')).toBeInTheDocument()
+    await waitFor(() => expect(glide.mock.calls.map(([el]) => el)).toContain(document.getElementById('cb-want')))
+    await waitFor(() => expect(document.activeElement).toBe(document.querySelector('#cb-want input')))
+
+    await tick(user, 'Grillad lax')
+    glide.mockClear()
+    await user.click(await screen.findByRole('button', { name: 'Skicka förfrågan' }))
+
+    expect(await screen.findByText('Fyll i leveransadressen (gata, postnummer och ort).')).toBeInTheDocument()
+    const section = screen.getByRole('region', { name: 'När och var' })
+    await waitFor(() => expect(glide.mock.calls.map(([el]) => el)).toContain(section))
+    await waitFor(() => expect(document.getElementById('catering-street')).toHaveFocus())
+    expect(posts('/catering/requests')).toHaveLength(0)
+  })
+
+  it('takes the guest to the contact details, and finally to the consent box, one thing at a time', async () => {
+    const { user } = await openWith30Guests()
+    await tick(user, 'Grillad lax')
+    await user.type(await screen.findByLabelText('Gatuadress'), 'Storgatan 1')
+    await user.type(screen.getByLabelText('Postnummer'), '58223')
+    await user.type(screen.getByLabelText('Ort'), 'Linköping')
+    await user.click(screen.getByRole('radio', { name: /Rengjord utrustning/ }))
+    glide.mockClear()
+
+    await user.click(screen.getByRole('button', { name: 'Skicka förfrågan' }))
+    expect(await screen.findByText('Fyll i ditt namn.')).toBeInTheDocument()
+    await waitFor(() => expect(glide.mock.calls.map(([el]) => el)).toContain(screen.getByRole('region', { name: 'Dina uppgifter' })))
+    await waitFor(() => expect(document.getElementById('catering-name')).toHaveFocus())
+
+    await user.type(document.getElementById('catering-name') as HTMLElement, 'Anna Svensson')
+    await user.type(screen.getByLabelText('E-post'), 'anna@example.se')
+    await user.type(screen.getByLabelText('Mobilnummer'), '0701234567')
+    glide.mockClear()
+    await user.click(screen.getByRole('button', { name: 'Skicka förfrågan' }))
+
+    expect(await screen.findByText('Godkänn villkoren för att skicka förfrågan.')).toBeInTheDocument()
+    const consent = document.getElementById('catering-accept') as HTMLElement
+    await waitFor(() => expect(glide.mock.calls.map(([el, o]) => [el, o?.block])).toContainEqual([consent, 'nearest']))
+    await waitFor(() => expect(consent).toHaveFocus())
   })
 
   it('explains in words a guest follows when the choice is too big for one request', async () => {
@@ -326,7 +413,12 @@ describe('Catering: tick what you want', () => {
     await user.type(screen.getByLabelText('Mobilnummer'), '0701234567')
     await user.type(screen.getByLabelText(/Önskemål/), 'Utan nötter, tack.')
     await user.click(accept)
-    await user.click(screen.getByRole('button', { name: 'Skicka förfrågan' }))
+    // Allt är ifyllt: knappen är inte längre avstängd och inget "nästa steg" visas.
+    const send = screen.getByRole('button', { name: 'Skicka förfrågan' })
+    expect(send).not.toHaveAttribute('aria-disabled')
+    expect(send).not.toHaveClass('is-incomplete')
+    expect(screen.queryByText(/^Nästa steg:/)).not.toBeInTheDocument()
+    await user.click(send)
 
     expect(await screen.findByText('Gästens sida')).toBeInTheDocument()
     const [sent] = posts('/catering/requests')

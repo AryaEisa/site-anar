@@ -19,6 +19,7 @@ import {
   useSite,
   useStickyCart,
 } from '@bookingsystemadvancedorg/site-kit'
+import { glideTo } from '../lib/glide'
 import MenuPicker from './MenuPicker'
 import { INITIAL_FORM, NOTES_MAX, STEPS, currentStep, detailsDone, guestError, hasAddress, validate, whenWhereDone } from './form'
 import type { FormState } from './form'
@@ -44,6 +45,9 @@ import '../styles/catering-builder.css'
 const QUOTE_DEBOUNCE_MS = 350
 const EMPTY_MENU: cateringApi.CateringMenu = { dishes: [], packages: [] }
 const ERROR_ID = 'catering-error'
+const MISSING_ID = 'catering-missing'
+/** Fälten i "När och var"; övriga fält med ett fel hör till "Dina uppgifter" (utom antal gäster och villkoret). */
+const WHEN_FIELDS: ReadonlySet<string> = new Set(['deliveryDate', 'deliveryTime', 'street', 'postalCode', 'city', 'equipmentReturn'])
 const kr = (ore: number | undefined) => cateringApi.kronor(ore)
 
 /** Vilket steg ett fält hör till: ändras det kan sidan gå vidare från det steget (useGuidedScroll.ts). */
@@ -222,6 +226,25 @@ export default function CateringBuilder() {
     }
   })
 
+  // Skicka förfrågan är avstängd tills allt är ifyllt, men går att trycka på: då rullar sidan till det som saknas och fältet får fokus.
+  // (aria-disabled, inte disabled: en avstängd knapp tar inte emot något klick, och ett tangentbord kan inte nå den.)
+  const missing = validate(form, { guests, minGuests, selected, dates: { min: earliest, max: latest } })
+  const complete = missing === null
+
+  /** Rullar till den del av formuläret som felet hör till och sätter fokus i fältet. */
+  function goToProblem(field: string | null) {
+    const input = field ? document.getElementById(`catering-${field}`) : document.querySelector<HTMLElement>('#cb-want input')
+    let section: HTMLElement | null = input
+    if (field === null) section = document.getElementById('cb-want')
+    else if (field === 'guests') section = document.querySelector<HTMLElement>('.cb-form .catering-step-title')
+    else if (WHEN_FIELDS.has(field)) section = whenRef.current
+    else if (field !== 'accept') section = detailsRef.current
+    // Rullningen startar i nästa tick: sker den i en tangenttryckning (Enter i ett fält) skulle samma tryck avbryta den.
+    window.setTimeout(() => {
+      void glideTo(section ?? input, { block: field === 'accept' ? 'nearest' : 'start' }).then(() => input?.focus({ preventScroll: true }))
+    }, 0)
+  }
+
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: value }))
     setMessage(null)
@@ -237,7 +260,7 @@ export default function CateringBuilder() {
     if (problem) {
       setMessage(problem.message)
       setProblemField(problem.field)
-      if (problem.field) document.getElementById(`catering-${problem.field}`)?.focus()
+      goToProblem(problem.field)
       return
     }
     if (!form.equipmentReturn || !payload) return
@@ -579,7 +602,18 @@ export default function CateringBuilder() {
               {message}
             </p>
           )}
-          <button type="submit" className={`btn-primary${busy ? ' is-busy' : ''}`} disabled={busy || selected === 0}>
+          {!complete && !message && missing && (
+            <p className="cb-missing" id={MISSING_ID}>
+              {`Nästa steg: ${missing.message}`}
+            </p>
+          )}
+          <button
+            type="submit"
+            className={`btn-primary${busy ? ' is-busy' : ''}${!complete && !busy ? ' is-incomplete' : ''}`}
+            disabled={busy}
+            aria-disabled={!complete && !busy ? true : undefined}
+            aria-describedby={!complete && !busy ? (message ? ERROR_ID : MISSING_ID) : undefined}
+          >
             {busy ? (
               <>
                 <span className="spinner" aria-hidden="true" />
